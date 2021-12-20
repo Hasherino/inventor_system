@@ -21,6 +21,6 @@ class Gear extends Model
     }
 
     public function request() {
-        return $this->belongsTo(Request::class);
+        return $this->hasOne(Request::class);
     }
 }

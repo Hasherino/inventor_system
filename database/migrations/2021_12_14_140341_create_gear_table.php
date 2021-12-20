@@ -16,13 +16,13 @@ class CreateGearTable extends Migration
         Schema::create('gear', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->unsignedInteger('user_id');
+            $table->unsignedInteger('user_id')->nullable();
             $table->string('name');
             $table->string('serial_number');
             $table->unsignedinteger('quantity');
             $table->double('unit_price');
             $table->boolean('long_term');
-            $table->integer('lend_stage');
+            $table->integer('lend_stage')->default('0');
         });
     }
 

@@ -22,7 +22,11 @@ class RequestController extends Controller
 
     public function store(Request $request) {
         $data = $request->only('user_id', 'gear_id', 'status');
-        $validator = Validator::make($data, $this->rules());
+        $validator = Validator::make($data, [
+            'user_id' => 'required|integer',
+            'gear_id' => 'required|integer',
+            'status' => 'required|integer'
+        ]);
 
         if ($validator->fails()) {
             return response()->json(['error' => $validator->messages()], 400);
@@ -52,14 +56,35 @@ class RequestController extends Controller
     }
 
     public function update(Request $request, $id) {
-        $data = $request->only('user_id', 'gear_id', 'status');
-        $validator = Validator::make($data, $this->rules());
+        $userRequest = $this->user->request()->find($id);
+
+        if (!$userRequest) {
+            $gears = $this->user->gear()->get();
+            foreach($gears as $gear) {
+                $userRequest = $gear->request()->find($id);
+                if ($userRequest) {
+                    break;
+                }
+            }
+        }
+
+        if (!$userRequest) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, request not found.'
+            ], 404);
+        }
+
+        $data = $request->only('status');
+        $validator = Validator::make($data, [
+            'status' => 'required|integer'
+        ]);
 
         if ($validator->fails()) {
             return response()->json(['error' => $validator->messages()], 400);
         }
 
-        $userRequest = \App\Models\Request::findOrFail($id)->fill($request->all());
+        $userRequest->fill($request->all());
         $userRequest->save();
 
         return response()->json([
@@ -70,19 +95,37 @@ class RequestController extends Controller
     }
 
     public function destroy($id) {
-        \App\Models\Request::findOrFail($id)->delete();
+        if ($this->user->role == 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Not authorized'
+            ], 401);
+        }
+
+        $request = $this->user->request()->find($id);
+
+        if (!$request) {
+            $gears = $this->user->gear()->get();
+            foreach($gears as $gear) {
+                $request = $gear->request()->find($id);
+                if ($request) {
+                    break;
+                }
+            }
+        }
+
+        if (!$request) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, request not found.'
+            ], 404);
+        }
+
+        $request->delete();
 
         return response()->json([
             'success' => true,
             'message' => 'Request deleted successfully'
         ]);
-    }
-
-    public function rules() {
-        return [
-            'user_id' => 'required|integer',
-            'gear_id' => 'required|integer',
-            'status' => 'required|integer'
-        ];
     }
 }

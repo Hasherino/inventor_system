@@ -17,10 +17,23 @@ class CompanyController extends Controller
     }
 
     public function index() {
+        if ($this->user->role == 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Not authorized'
+            ], 401);
+        }
         return Company::all();
     }
 
     public function store(Request $request) {
+        if ($this->user->role == 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Not authorized'
+            ], 401);
+        }
+
         $data = $request->only('name');
         $validator = Validator::make($data, $this->rules());
 
@@ -52,6 +65,13 @@ class CompanyController extends Controller
     }
 
     public function update(Request $request, $id) {
+        if ($this->user->role == 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Not authorized'
+            ], 401);
+        }
+
         $data = $request->only('name');
         $validator = Validator::make($data, $this->rules());
 
@@ -59,18 +79,43 @@ class CompanyController extends Controller
             return response()->json(['error' => $validator->messages()], 400);
         }
 
-        $company = Company::findOrFail($id)->fill($request->all());
+        $company = Company::find($id);
+
+        if (!$company) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, company not found.'
+            ], 404);
+        }
+
+        $company->fill($request->all());
         $company->save();
 
         return response()->json([
             'success' => true,
-            'message' => 'Gear updated successfully',
+            'message' => 'Company updated successfully',
             'data' => $company
         ]);
     }
 
     public function destroy($id) {
-        Company::findOrFail($id)->delete();
+        if ($this->user->role == 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Not authorized'
+            ], 401);
+        }
+
+        $company = Company::find($id);
+
+        if (!$company) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, company not found.'
+            ], 404);
+        }
+
+        $company->delete();
 
         return response()->json([
             'success' => true,
@@ -80,7 +125,7 @@ class CompanyController extends Controller
 
     public function rules() {
         return [
-            'name' => 'required|string'
+            'name' => 'required|string|unique:companies'
         ];
     }
 }
