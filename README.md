@@ -60,7 +60,7 @@ Function: Returns the user with the specified id.
 
 #### PUT
 
-<strong>URI: `PUT` http://localhost:8000/api/users/update/{id} </strong>
+<strong>URI: `PUT` http://localhost:8000/api/users/{id} </strong>
 
 Function: Updates the user with the specified id.
 
@@ -85,7 +85,7 @@ Parameters:
 
 #### DELETE
 
-<strong>URI: `DELETE` http://localhost:8000/api/users/delete/{id} </strong>
+<strong>URI: `DELETE` http://localhost:8000/api/users/{id} </strong>
 
 Function: Deletes the user with the specified id.
 
@@ -196,7 +196,7 @@ Function: Returns the company with the specified id
 
 #### POST
 
-<strong>URI: `POST` http://localhost:8000/api/companies/create </strong>
+<strong>URI: `POST` http://localhost:8000/api/companies </strong>
 
 Function: Creates a new company. Only for users with role: 1.
 
@@ -304,7 +304,7 @@ Function: Returns the user's gear with the specified id
 
 #### POST
 
-<strong>URI: `POST` http://localhost:8000/api/gear/create </strong>
+<strong>URI: `POST` http://localhost:8000/api/gear </strong>
 
 Function: Creates a new gear. Only for users with roles: 1.
 
@@ -417,7 +417,7 @@ Function: Returns the request with the specified id
 
 #### POST
 
-<strong>URI: `POST` http://localhost:8000/api/gear/create </strong>
+<strong>URI: `POST` http://localhost:8000/api/requests </strong>
 
 Function: Creates a new request.
 
@@ -438,7 +438,7 @@ Parameters:
 
 #### PUT
 
-<strong>URI: `PUT` http://localhost:8000/api/gear/update/{id} </strong>
+<strong>URI: `PUT` http://localhost:8000/api/requests/{id} </strong>
 
 Function: Updates the request with the specified id (if the request belongs to the user or user's gear).
 
@@ -457,7 +457,7 @@ Parameters:
 
 #### DELETE
 
-<strong>URI: `DELETE` http://localhost:8000/api/gear/delete/{id} </strong>
+<strong>URI: `DELETE` http://localhost:8000/api/requests/{id} </strong>
 
 Function: Deletes the request with the specified id (if the request belongs to the user or user's gear).
 

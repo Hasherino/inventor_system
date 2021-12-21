@@ -33,31 +33,31 @@ Route::group(['prefix' => 'gear'], function () {
     Route::get('', [GearController::class, 'userIndex']);
     Route::get('{id}', [GearController::class, 'userShow']);
     Route::get('all/{id}', [GearController::class, 'show']);
-    Route::post('create', [GearController::class, 'store']);
-    Route::put('update/{id}',  [GearController::class, 'update']);
+    Route::post('', [GearController::class, 'store']);
+    Route::put('{id}',  [GearController::class, 'update']);
     Route::put('lend/{id}',  [GearController::class, 'lend']);
-    Route::delete('delete/{id}',  [GearController::class, 'destroy']);
+    Route::delete('{id}',  [GearController::class, 'destroy']);
 });
 // Company controller routes
 Route::group(['prefix' => 'companies'], function () {
     Route::get('', [CompanyController::class, 'index']);
     Route::get('{id}', [CompanyController::class, 'show']);
-    Route::post('create', [CompanyController::class, 'store']);
-    Route::put('update/{id}',  [CompanyController::class, 'update']);
-    Route::delete('delete/{id}',  [CompanyController::class, 'destroy']);
+    Route::post('', [CompanyController::class, 'store']);
+    Route::put('{id}',  [CompanyController::class, 'update']);
+    Route::delete('{id}',  [CompanyController::class, 'destroy']);
 });
 // Giveaway request controller routes
 Route::group(['prefix' => 'requests'], function () {
     Route::get('', [RequestController::class, 'index']);
     Route::get('{id}', [RequestController::class, 'show']);
-    Route::post('create', [RequestController::class, 'store']);
-    Route::put('update/{id}',  [RequestController::class, 'update']);
-    Route::delete('delete/{id}',  [RequestController::class, 'destroy']);
+    Route::post('', [RequestController::class, 'store']);
+    Route::put('{id}',  [RequestController::class, 'update']);
+    Route::delete('{id}',  [RequestController::class, 'destroy']);
 });
 // User controller routes
 Route::group(['prefix' => 'users'], function () {
     Route::get('', [UserController::class, 'index']);
     Route::get('{id}', [UserController::class, 'show']);
-    Route::put('update/{id}',  [UserController::class, 'update']);
-    Route::delete('delete/{id}',  [UserController::class, 'destroy']);
+    Route::put('{id}',  [UserController::class, 'update']);
+    Route::delete('{id}',  [UserController::class, 'destroy']);
 });
