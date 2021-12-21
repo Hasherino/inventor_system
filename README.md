@@ -12,26 +12,29 @@
 
 - [User](#user)
     * [GET](#get)
+    * [POST](#post)
     * [PUT](#put)
     * [DELETE](#delete)
 - [Authorization](#authorization)
-    * [GET](#get-1)
-    * [POST](#post)
+  * [GET](#get-1)
+  * [POST](#post-1)
 - [Company](#company)
     * [GET](#get-2)
-    * [POST](#post-1)
+    * [POST](#post-2)
     * [PUT](#put-1)
     * [DELETE](#delete-1)
 - [Gear](#gear)
     * [GET](#get-3)
-    * [POST](#post-2)
+    * [POST](#post-3)
     * [PUT](#put-2)
     * [DELETE](#delete-2)
 - [Requests](#requests)
     * [GET](#get-4)
-    * [POST](#post-3)
+    * [POST](#post-4)
     * [PUT](#put-3)
     * [DELETE](#delete-3)
+- [Password Reset](#password-reset)
+  * [POST](#post-5) 
 
 ### User
 #### GET
@@ -57,6 +60,32 @@ Function: Returns the user with the specified id.
 * Error response:
     * Code: 404 Not found
     * Content: "Sorry, user not found"
+
+#### POST
+
+<strong>URI: `POST` http://localhost:8000/api/users </strong>
+
+Function: Adds a user to the database and emails him to set a password. Only for users with roles: 1.
+
+Parameters:
+
+|Parameter              |Type  |Description                       |Required|
+|-----------------------|------|----------------------------------|--------|
+|`first_name`           |string|The first name of the user        |true    |
+|`last_name`            |string|The last name of the user         |true    |
+|`email`                |string|Email of the user                 |true    |
+|`company_id`           |int   |User's company id                 |true    |
+|`role`                 |int   |User's role (0: regular, 1: admin)|true    |
+
+* Success response:
+    * Code: 201 Created
+    * Content: "Password creation email has been sent."
+* Error response (unauthorized):
+    * Code: 401 Unauthorized
+    * Content: Unauthorized
+* Error response (bad parameters):
+    * Code: 400 Bad request
+    * Content: Error specification
 
 #### PUT
 
@@ -111,29 +140,6 @@ Function: Returns the logged in user's data.
     * Content: logged in user's data
 
 #### POST
-
-<strong>URI: `POST` http://localhost:8000/api/auth/register </strong>
-
-Function: Adds a user to the database. Only for users with roles: 1.
-
-Parameters:
-
-|Parameter              |Type  |Description                       |Required|
-|-----------------------|------|----------------------------------|--------|
-|`first_name`           |string|The first name of the user        |true    |
-|`last_name`            |string|The last name of the user         |true    |
-|`email`                |string|Email of the user                 |true    |
-|`password`             |string|Password of the user              |true    |
-|`password_confirmation`|string|Password of the user              |true    |
-|`company_id`           |int   |User's company id                 |true    |
-|`role`                 |int   |User's role (0: regular, 1: admin)|true    |
-
-* Success response:
-    * Code: 201 Created
-    * Content: The created user
-* Error response:
-    * Code: 400 Bad request
-    * Content: Error specification
 
 <strong>URI: `POST` http://localhost:8000/api/auth/login </strong>
 
@@ -465,5 +471,40 @@ Function: Deletes the request with the specified id (if the request belongs to t
     * Code: 200 OK
     * Content: "Request deleted successfully."
 * Error response:
-    * Code: 404 Unauthorized
+    * Code: 404 Not found
     * Content: "Sorry, request not found."
+
+### Password reset
+#### POST
+
+<strong>URI: `POST` http://localhost:8000/api/reset-password </strong>
+
+Function: Sends a password reset link to the specified email
+
+|Parameter|Type  |Description                                        |Required|
+|---------|------|---------------------------------------------------|--------|
+|`email`  |string|The email of the user, who wants his password reset|true    |
+
+* Success response:
+    * Code: 200 OK
+    * Content: "Password reset email has been sent."
+* Error response:
+    * Code: 404 Not found
+    * Content: "Email does not exist."
+
+<strong>URI: `POST` http://localhost:8000/api/change-password </strong>
+
+Function: Changes user's password to a new one
+
+|Parameter |Type  |Description                                              |Required|
+|----------|------|---------------------------------------------------------|--------|
+|`email`   |string|The email of the user, who wants his password reset      |true    |
+|`token`   |string|Token, which is given with the link to reset/set password|true    |
+|`password`|string|The new password                                         |true    |
+
+* Success response:
+    * Code: 201 Created
+    * Content: "Password has been updated."
+* Error response:
+    * Code: 422 Unprocessable Content
+    * Content: "Either your email or token is wrong."

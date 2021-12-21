@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Company;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,6 +33,37 @@ class UserController extends Controller
         }
 
         return $user;
+    }
+
+    public function register(Request $request) {
+        if ($this->user->role == 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Not authorized'
+            ], 401);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
+            'email' => 'required|string|email|unique:users',
+            'company_id' => 'required|integer',
+            'role' => 'required|integer'
+        ]);
+
+        if($validator->fails()){
+            return response()->json($validator->errors()->toJson(), 400);
+        }
+
+        User::create(array_merge(
+            $validator->validated(),
+            ['password' => bcrypt(Str::random(20))]
+        ));
+
+        app('App\Http\Controllers\PasswordResetRequestController')->sendMail($request->email);
+        return response()->json([
+            'message' => 'Password creation email has been sent.'
+        ], 201);
     }
 
     public function update(Request $request, $id) {

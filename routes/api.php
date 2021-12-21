@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\ChangePasswordController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\GearController;
+use App\Http\Controllers\PasswordResetRequestController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -22,7 +24,6 @@ use App\Http\Controllers\AuthController;
 // Authentication routes
 Route::group(['prefix' => 'auth'], function () {
     Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/register', [AuthController::class, 'register']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/refresh', [AuthController::class, 'refresh']);
     Route::get('/user-profile', [AuthController::class, 'userProfile']);
@@ -58,6 +59,10 @@ Route::group(['prefix' => 'requests'], function () {
 Route::group(['prefix' => 'users'], function () {
     Route::get('', [UserController::class, 'index']);
     Route::get('{id}', [UserController::class, 'show']);
+    Route::post('', [UserController::class, 'register']);
     Route::put('{id}',  [UserController::class, 'update']);
     Route::delete('{id}',  [UserController::class, 'destroy']);
 });
+// Password reset routes
+Route::post('reset-password', [PasswordResetRequestController::class, 'sendPasswordResetEmail']);
+Route::post('change-password', [ChangePasswordController::class, 'passwordResetProcess']);
