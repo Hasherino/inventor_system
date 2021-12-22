@@ -347,7 +347,7 @@ Parameters:
 |`quantity`     |int   |Quantity of the gear  |false   |
 |`unit_price`   |double|Unit price of the gear|false   |
 |`long_term`    |bool  |Is the gear long-term |false   |
-|`lend_stage`   |int   |The status of lending |false   |
+|`lent`         |bool  |Is the gear lent      |false   |
 |`user_id`      |int   |Gear's owner's id     |false   |
 
 * Success response:
@@ -356,26 +356,6 @@ Parameters:
 * Error response (unauthorized):
     * Code: 401 Unauthorized
     * Content: "Not authorized"
-* Error response (gear not found):
-    * Code: 404 Not found
-    * Content: "Sorry, gear not found"
-* Error response (bad parameters):
-    * Code: 400 Bad request
-    * Content: Error specification
-
-<strong>URI: `PUT` http://localhost:8000/api/gear/lend/{id} </strong>
-
-Function: Updates all the gear's lend status.
-
-Parameters:
-
-|Parameter      |Type  |Description           |Required|
-|---------------|------|----------------------|--------|
-|`lend_stage`   |int   |The status of lending |false   |
-
-* Success response:
-    * Code: 200 OK
-    * Content: The updated gear
 * Error response (gear not found):
     * Code: 404 Not found
     * Content: "Sorry, gear not found"
@@ -441,6 +421,43 @@ Parameters:
 * Error response:
     * Code: 401 Unauthorized
     * Content: "Not authorized"
+
+<strong>URI: `POST` http://localhost:8000/api/requests/lend/{id} </strong>
+
+Function: Creates a request to lend gear (id in URI is the id of the gear to be lent)
+
+Parameters:
+
+|Parameter|Type  |Description                                  |Required|
+|---------|------|---------------------------------------------|--------|
+|`user_id`|int   |Id of the user that the gear is being lent to|true    |
+
+* Success response:
+    * Code: 200 OK
+    * Content: "Lend request sent."
+* Error response (gear not found):
+    * Code: 404 Not found
+    * Content: "Sorry, gear not found"
+* Error response (user not found):
+    * Code: 404 Not found
+    * Content: "Sorry, user not found"
+* Error response (gear already has a request):
+    * Code: 400 Bad request
+    * Content: "Gear already has a request"
+* Error response (bad parameters):
+    * Code: 400 Bad request
+    * Content: Error specification
+
+<strong>URI: `POST` http://localhost:8000/api/requests/acceptLend/{id} </strong>
+
+Function: Accepts a lend request (id in URI is the id of the lend request)
+
+* Success response:
+    * Code: 200 OK
+    * Content: "Lend request accepted."
+* Error response:
+    * Code: 404 Not found
+    * Content: "Sorry, request not found"
 
 #### PUT
 
@@ -508,3 +525,17 @@ Function: Changes user's password to a new one
 * Error response:
     * Code: 422 Unprocessable Content
     * Content: "Either your email or token is wrong."
+
+### History
+#### GET
+
+<strong>URI: `GET` http://localhost:8000/api/history </strong>
+
+Function: Returns user's history
+
+Event parameter explanation: </br>
+`0 = lent` `1 = got back` `2 = deleted`
+
+* Success response:
+    * Code: 200 OK
+    * Content: User's history

@@ -3,6 +3,7 @@
 use App\Http\Controllers\ChangePasswordController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\GearController;
+use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\PasswordResetRequestController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\UserController;
@@ -36,7 +37,6 @@ Route::group(['prefix' => 'gear'], function () {
     Route::get('all/{id}', [GearController::class, 'show']);
     Route::post('', [GearController::class, 'store']);
     Route::put('{id}',  [GearController::class, 'update']);
-    Route::put('lend/{id}',  [GearController::class, 'lend']);
     Route::delete('{id}',  [GearController::class, 'destroy']);
 });
 // Company controller routes
@@ -52,6 +52,8 @@ Route::group(['prefix' => 'requests'], function () {
     Route::get('', [RequestController::class, 'index']);
     Route::get('{id}', [RequestController::class, 'show']);
     Route::post('', [RequestController::class, 'store']);
+    Route::post('lend/{id}',  [RequestController::class, 'lend']);
+    Route::post('acceptLend/{id}', [RequestController::class, 'acceptLend']);
     Route::put('{id}',  [RequestController::class, 'update']);
     Route::delete('{id}',  [RequestController::class, 'destroy']);
 });
@@ -66,3 +68,5 @@ Route::group(['prefix' => 'users'], function () {
 // Password reset routes
 Route::post('reset-password', [PasswordResetRequestController::class, 'sendPasswordResetEmail']);
 Route::post('change-password', [ChangePasswordController::class, 'passwordResetProcess']);
+// History routes
+Route::get('history', [HistoryController::class, 'index']);

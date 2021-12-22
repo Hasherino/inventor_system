@@ -129,34 +129,6 @@ class GearController extends Controller
         ]);
     }
 
-    public function lend(Request $request, $id) {
-        $data = $request->only('lend_stage');
-        $validator = Validator::make($data, [
-            'lend_stage' => 'integer'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->messages()], 400);
-        }
-
-        $gear = gear::find($id);
-        if (!$gear) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Sorry, gear not found.'
-            ], 404);
-        }
-
-        $gear->fill($request->all());
-        $gear->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Gear updated successfully',
-            'data' => $gear
-        ]);
-    }
-
     public function destroy($id) {
         if ($this->user->role == 0) {
             return response()->json([

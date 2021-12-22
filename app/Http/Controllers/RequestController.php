@@ -2,6 +2,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
+use App\Models\Gear;
+use App\Models\History;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -53,6 +55,66 @@ class RequestController extends Controller
         }
 
         return $request;
+    }
+
+    public function lend(Request $request, $id) {
+        $data = $request->only('user_id');
+        $validator = Validator::make($data, [
+            'user_id' => 'integer|required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->messages()], 400);
+        }
+
+        $gear = $this->user->gear()->find($id);
+        if (!$gear) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, gear not found.'
+            ], 404);
+        }
+
+        if(!\App\Models\Request::where('gear_id', $id)->get()->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gear already has a request'
+            ], 400);
+        }
+
+        \App\Models\Request::create([
+            'user_id' => $request->user_id,
+            'gear_id' => $id,
+            'status' => 0
+        ])->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Lend request sent.'
+        ]);
+    }
+
+    public function acceptLend($id) {
+        $request = $this->user->request()->find($id);
+        if (!$request) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, request not found.'
+            ], 404);
+        }
+
+        $request->gear()->update(['lent' => 1]);
+        $request->update(['status' => 1]);
+        History::create([
+            'user_id' => $this->user->id,
+            'gear_id' => $request->gear()->get()->first()->id,
+            'event' => 0
+        ])->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Lend request accepted.'
+        ]);
     }
 
     public function update(Request $request, $id) {

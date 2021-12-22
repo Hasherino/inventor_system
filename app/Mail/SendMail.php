@@ -31,7 +31,7 @@ class SendMail extends Mailable
      * @return $this
      */
     public function build(){
-        return $this->markdown('Email.resetPassword')->with([
+        return $this->subject("Set a password")->markdown('Email.resetPassword')->with([
             'token' => $this->token,
             'email' => $this->email
         ]);

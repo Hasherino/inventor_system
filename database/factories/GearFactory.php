@@ -19,10 +19,9 @@ class GearFactory extends Factory
             'user_id' => User::all()->random()->id,
             'name' => $this->faker->word(),
             'serial_number' => $this->faker->numberBetween(1, 1000000000),
-            'quantity' => $this->faker->numberBetween(1, 10),
             'unit_price' => $this->faker->numberBetween(5, 100),
             'long_term' => $this->faker->boolean(),
-            'lend_stage' => $this->faker->numberBetween(0, 2)
+            'lent' => 0
         ];
     }
 }

@@ -23,4 +23,8 @@ class Gear extends Model
     public function request() {
         return $this->hasOne(Request::class);
     }
+
+    public function history() {
+        return $this->belongsToMany(Request::class);
+    }
 }
