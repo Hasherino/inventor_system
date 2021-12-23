@@ -17,7 +17,14 @@ class HistoryController extends Controller
     }
 
     public function index() {
-        return $this->user->gear()->get();
+        $history = $this->user->history()->get()->push();
+
+        $userGear = $this->user->gear();
+        foreach($userGear as $gear) {
+            $history = $history->push($gear->history());
+        }
+
+        return $history->sortBy('created_at')->values();
     }
 
     public function store(Request $request) {

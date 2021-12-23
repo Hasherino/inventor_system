@@ -17,7 +17,18 @@ class GearController extends Controller
     }
 
     public function userIndex() {
-        return $this->user->gear()->get();
+        $userGear = $this->user->gear()->get();
+        foreach ($userGear as $gear) {
+            $gear['own'] = 1;
+        }
+
+        $requests = $this->user->request()->where('status', 1)->get();
+        foreach ($requests as $request) {
+            $gear = $request->gear()->get()->first();
+            $gear['own'] = 0;
+            $userGear = $userGear->push($gear);
+        }
+        return $userGear;
     }
 
     public function index() {

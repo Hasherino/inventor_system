@@ -461,6 +461,17 @@ Function: Accepts a lend request (id in URI is the id of the lend request)
     * Code: 404 Not found
     * Content: "Sorry, request not found"
 
+<strong>URI: `POST` http://localhost:8000/api/requests/returnLend/{id} </strong>
+
+Function: Returns lent gear (id in URI is the id of the gear that is being returned)
+
+* Success response:
+    * Code: 200 OK
+    * Content: "Gear returned"
+* Error response:
+    * Code: 404 Not found
+    * Content: "Sorry, request/gear not found"
+
 #### PUT
 
 <strong>URI: `PUT` http://localhost:8000/api/requests/{id} </strong>
@@ -536,7 +547,7 @@ Function: Changes user's password to a new one
 Function: Returns user's history
 
 Event parameter explanation: </br>
-`0 = lent` `1 = got back` `2 = deleted`
+`0 = lent` `1 = returned` `2 = deleted`
 
 * Success response:
     * Code: 200 OK

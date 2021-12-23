@@ -67,6 +67,13 @@ class RequestController extends Controller
             return response()->json(['error' => $validator->messages()], 400);
         }
 
+        if ($request->user_id == $this->user->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You cannot lend gear to yourself.'
+            ], 400);
+        }
+
         $gear = $this->user->gear()->find($id);
         if (!$gear) {
             return response()->json([
@@ -114,6 +121,33 @@ class RequestController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Lend request accepted.'
+        ]);
+    }
+
+    public function returnLend($id) {
+        $request = $this->user->request()->where('gear_id', $id)->first();
+        if (!$request or $request->status != 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, request not found.'
+            ], 404);
+        }
+
+        $gear = $request->gear()->first();
+        if (!$gear) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, gear not found.'
+            ], 404);
+        }
+
+        $gear->update(['lent' => 0]);
+        $request->delete();
+        History::create(['gear_id' => $gear->id, 'user_id' => $this->user->id, 'event' => 1]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Gear returned'
         ]);
     }
 
