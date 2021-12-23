@@ -46,13 +46,6 @@ class GearController extends Controller
     }
 
     public function store(Request $request) {
-        if ($this->user->role == 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Not authorized'
-            ], 401);
-        }
-
         $data = $request->only('name', 'serial_number', 'unit_price', 'long_term', 'user_id');
         $validator = Validator::make($data, [
             'name' => 'required|string',
