@@ -55,7 +55,7 @@ class GearController extends Controller
             'serial_number' => 'required|string',
             'unit_price' => 'required|numeric',
             'long_term' => 'required|boolean',
-            'user_id' => 'integer'
+            'user_id' => 'required|integer'
         ]);
 
         if ($validator->fails()) {
