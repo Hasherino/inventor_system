@@ -322,7 +322,6 @@ Parameters:
 |---------------|------|----------------------|--------|
 |`name`         |string|Gear's name           |true    |
 |`serial_number`|string|Gear's serial number  |true    |
-|`quantity`     |int   |Quantity of the gear  |true    |
 |`unit_price`   |double|Unit price of the gear|true    |
 |`long_term`    |bool  |Is the gear long-term |true    |
 |`user_id`      |int   |Gear's owner's id     |false   |
@@ -346,7 +345,6 @@ Parameters:
 |---------------|------|----------------------|--------|
 |`name`         |string|Gear's name           |false   |
 |`serial_number`|string|Gear's serial number  |false   |
-|`quantity`     |int   |Quantity of the gear  |false   |
 |`unit_price`   |double|Unit price of the gear|false   |
 |`long_term`    |bool  |Is the gear long-term |false   |
 |`lent`         |bool  |Is the gear lent      |false   |

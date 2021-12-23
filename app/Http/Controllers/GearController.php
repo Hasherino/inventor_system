@@ -49,11 +49,10 @@ class GearController extends Controller
             ], 401);
         }
 
-        $data = $request->only('name', 'serial_number', 'quantity', 'unit_price', 'long_term', 'user_id');
+        $data = $request->only('name', 'serial_number', 'unit_price', 'long_term', 'user_id');
         $validator = Validator::make($data, [
             'name' => 'required|string',
             'serial_number' => 'required|string',
-            'quantity' => 'required|integer',
             'unit_price' => 'required|numeric',
             'long_term' => 'required|boolean',
             'user_id' => 'integer'
@@ -107,11 +106,10 @@ class GearController extends Controller
     }
 
     public function update(Request $request, $id) {
-        $data = $request->only('name', 'serial_number', 'quantity', 'unit_price', 'long_term', 'lend_stage', 'user_id');
+        $data = $request->only('name', 'serial_number', 'unit_price', 'long_term', 'lend_stage', 'user_id');
         $validator = Validator::make($data, [
             'name' => 'string',
             'serial_number' => 'string',
-            'quantity' => 'integer',
             'unit_price' => 'numeric',
             'long_term' => 'boolean',
             'lend_stage' => 'integer',
