@@ -19,7 +19,7 @@ class CreateGearTable extends Migration
             $table->unsignedInteger('user_id');
             $table->string('name');
             $table->string('code');
-            $table->string('serial_number');
+            $table->string('serial_number')->nullable();
             $table->double('unit_price');
             $table->boolean('long_term');
             $table->boolean('lent')->default('0');

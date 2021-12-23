@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Gear;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,12 +23,15 @@ class GearController extends Controller
             $gear['own'] = 1;
         }
 
-        $requests = $this->user->request()->where('status', 1)->get();
+        $requests = $this->user->request()->where('status', 1);
         foreach ($requests as $request) {
-            $gear = $request->gear()->get()->first();
+            $gear = $request->gear()->first();
             $gear['own'] = 0;
             $userGear = $userGear->push($gear);
         }
+
+        $userGear = $this->groupByCode($userGear);
+
         return $userGear;
     }
 
@@ -38,7 +42,7 @@ class GearController extends Controller
                 'message' => 'Not authorized'
             ], 401);
         }
-        return gear::all();
+        return $this->groupByCode(gear::all());
     }
 
     public function store(Request $request) {
@@ -52,7 +56,7 @@ class GearController extends Controller
         $data = $request->only('name', 'serial_number', 'unit_price', 'long_term', 'user_id');
         $validator = Validator::make($data, [
             'name' => 'required|string',
-            'serial_number' => 'required|string',
+            'serial_number' => 'string',
             'unit_price' => 'required|numeric',
             'long_term' => 'required|boolean',
             'user_id' => 'required|integer'
@@ -160,5 +164,20 @@ class GearController extends Controller
             'success' => true,
             'message' => 'Gear deleted successfully'
         ]);
+    }
+
+    public function groupByCode($userGear) {
+        $userGear = $userGear->groupBy('code')->values();
+        $final = [];
+        foreach ($userGear as $group) {
+            $gearCollection = collect($group);
+            $gear = $group->first();
+            $name = $gear->name;
+            $code = $gear->code;
+            $count = $group->count();
+            $final[] = collect(['name' => $name, 'code' => $code, 'count' => $count, 'gear' => $gearCollection]);
+        }
+
+        return $final;
     }
 }
