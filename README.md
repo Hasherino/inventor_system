@@ -308,6 +308,23 @@ Parameters:
     * Code: 200 OK
     * Content: A list of all user's gear
 
+<strong>URI: `GET` http://localhost:8000/api/gear/user/{id} </strong>
+
+Function: Returns all user's with the specified id gear. Only for users with role: 1.
+
+Parameters:
+
+|Parameter|Type  |Description |Required|
+|---------|------|------------|--------|
+|`search` |string|Search query|false   |
+
+* Success response:
+    * Code: 200 OK
+    * Content: A list of all user's gear
+* Error response:
+    * Code: 401 Unauthorized
+    * Content: "Not authorized"
+
 <strong>URI: `GET` http://localhost:8000/api/gear/all/{id} </strong>
 
 Function: Returns the gear with the specified id. Only for users with role: 1.

@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Gear;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -43,6 +44,31 @@ class GearController extends Controller
             ], 401);
         }
         return $this->groupByCode(gear::where('name', 'like', "%$request->search%")->get());
+    }
+
+    public function selectedIndex(Request $request, $id) {
+        if ($this->user->role == 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Not authorized'
+            ], 401);
+        }
+
+        $userGear = User::find($id)->gear()->where('name', 'like', "%$request->search%")->get();
+        foreach ($userGear as $gear) {
+            $gear['own'] = 1;
+        }
+
+        $requests = $this->user->request()->where('status', 1);
+        foreach ($requests as $request) {
+            $gear = $request->gear()->first();
+            $gear['own'] = 0;
+            $userGear = $userGear->push($gear);
+        }
+
+        $userGear = $this->groupByCode($userGear);
+
+        return $userGear;
     }
 
     public function store(Request $request) {
