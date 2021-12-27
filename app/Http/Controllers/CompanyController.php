@@ -24,7 +24,7 @@ class CompanyController extends Controller
             ], 401);
         }
 
-        $companies = Company::where('name', 'like', "%$request->search%")->get();
+        $companies = Company::where('name', 'ilike', "%$request->search%")->get();
         foreach ($companies as $company) {
             $company['user_count'] = $company->users()->count();
         }

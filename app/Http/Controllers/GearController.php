@@ -43,7 +43,7 @@ class GearController extends Controller
                 'message' => 'Not authorized'
             ], 401);
         }
-        return $this->groupByCode(gear::where('name', 'like', "%$request->search%")->get());
+        return $this->groupByCode(gear::where('name', 'ilike', "%$request->search%")->get());
     }
 
     public function selectedIndex(Request $request, $id) {
@@ -54,7 +54,7 @@ class GearController extends Controller
             ], 401);
         }
 
-        $userGear = User::find($id)->gear()->where('name', 'like', "%$request->search%")->get();
+        $userGear = User::find($id)->gear()->where('name', 'ilike', "%$request->search%")->get();
         foreach ($userGear as $gear) {
             $gear['own'] = 1;
         }

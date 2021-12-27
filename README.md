@@ -312,12 +312,6 @@ Parameters:
 
 Function: Returns all user's with the specified id gear. Only for users with role: 1.
 
-Parameters:
-
-|Parameter|Type  |Description |Required|
-|---------|------|------------|--------|
-|`search` |string|Search query|false   |
-
 * Success response:
     * Code: 200 OK
     * Content: A list of all user's gear

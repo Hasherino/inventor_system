@@ -28,7 +28,7 @@ class UserController extends Controller
         }
 
         $search = str_replace(' ', '', $request->search);
-        return User::whereRaw('CONCAT(first_name, last_name) LIKE ? ', '%' . $search . '%')->get();
+        return User::whereRaw('CONCAT(first_name, last_name) ilike ? ', '%' . $search . '%')->get();
     }
 
     public function show($id) {
