@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Company;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -18,8 +19,15 @@ class UserController extends Controller
         $this->user = JWTAuth::parseToken()->authenticate();
     }
 
-    public function index() {
-        return User::all();
+    public function index(Request $request) {
+        if ($this->user->role == 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Not authorized'
+            ], 401);
+        }
+
+        return User::whereRaw('CONCAT(first_name, " ", last_name) LIKE ? ', '%' . $request->search . '%')->get();
     }
 
     public function show($id) {

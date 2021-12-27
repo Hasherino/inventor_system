@@ -17,8 +17,8 @@ class GearController extends Controller
         $this->user = JWTAuth::parseToken()->authenticate();
     }
 
-    public function userIndex() {
-        $userGear = $this->user->gear()->get();
+    public function userIndex(Request $request) {
+        $userGear = $this->user->gear()->where('name', 'like', "%$request->search%")->get();
         foreach ($userGear as $gear) {
             $gear['own'] = 1;
         }
@@ -35,14 +35,14 @@ class GearController extends Controller
         return $userGear;
     }
 
-    public function index() {
+    public function index(Request $request) {
         if ($this->user->role == 0) {
             return response()->json([
                 'success' => false,
                 'message' => 'Not authorized'
             ], 401);
         }
-        return $this->groupByCode(gear::all());
+        return $this->groupByCode(gear::where('name', 'like', "%$request->search%")->get());
     }
 
     public function store(Request $request) {

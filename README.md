@@ -43,7 +43,13 @@
 
 <strong>URI: `GET` http://localhost:8000/api/users </strong>
 
-Function: Returns all users in the database.
+Function: Returns all users in the database. Only for users with role: 1
+
+Parameters:
+
+|Parameter|Type  |Description |Required|
+|---------|------|------------|--------|
+|`search` |string|Search query|false   |
 
 * Success response:
   * Code: 200 OK
@@ -184,6 +190,12 @@ Function: Refreshes user's token.
 
 Function: Returns all companies' data. Only for users with role: 1.
 
+Parameters:
+
+|Parameter|Type  |Description |Required|
+|---------|------|------------|--------|
+|`search` |string|Search query|false   |
+
 * Success response:
     * Code: 200 OK
     * Content: A list of all companies
@@ -269,6 +281,12 @@ Function: Deletes the company with the specified id. Only for users with role: 1
 
 Function: Returns all gear. Only for users with role: 1.
 
+Parameters:
+
+|Parameter|Type  |Description |Required|
+|---------|------|------------|--------|
+|`search` |string|Search query|false   |
+
 * Success response:
     * Code: 200 OK
     * Content: A list of all gear
@@ -279,6 +297,12 @@ Function: Returns all gear. Only for users with role: 1.
 <strong>URI: `GET` http://localhost:8000/api/gear </strong>
 
 Function: Returns all user's gear
+
+Parameters:
+
+|Parameter|Type  |Description |Required|
+|---------|------|------------|--------|
+|`search` |string|Search query|false   |
 
 * Success response:
     * Code: 200 OK

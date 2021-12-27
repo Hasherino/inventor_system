@@ -16,14 +16,15 @@ class CompanyController extends Controller
         $this->user = JWTAuth::parseToken()->authenticate();
     }
 
-    public function index() {
+    public function index(Request $request) {
         if ($this->user->role == 0) {
             return response()->json([
                 'success' => false,
                 'message' => 'Not authorized'
             ], 401);
         }
-        return Company::all();
+
+        return Company::where('name', 'like', "%$request->search%")->get();
     }
 
     public function store(Request $request) {
