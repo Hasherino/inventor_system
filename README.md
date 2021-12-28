@@ -382,7 +382,7 @@ Parameters:
 |`serial_number`|string|Gear's serial number  |true    |
 |`unit_price`   |double|Unit price of the gear|true    |
 |`long_term`    |bool  |Is the gear long-term |true    |
-|`user_id`      |int   |Gear's owner's id     |false   |
+|`user_id`      |int   |Gear's owner's id     |true    |
 |`amount`       |int   |Quantity of the gear  |false   |
 
 * Success response:
