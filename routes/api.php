@@ -61,7 +61,8 @@ Route::group(['prefix' => 'requests'], function () {
 });
 // User controller routes
 Route::group(['prefix' => 'users'], function () {
-    Route::get('', [UserController::class, 'index']);
+    Route::get('all', [UserController::class, 'index']);
+    Route::get('', [UserController::class, 'userIndex']);
     Route::get('{id}', [UserController::class, 'show']);
     Route::post('', [UserController::class, 'register']);
     Route::put('{id}',  [UserController::class, 'update']);

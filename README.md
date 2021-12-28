@@ -41,9 +41,30 @@
 ### User
 #### GET
 
-<strong>URI: `GET` http://localhost:8000/api/users </strong>
+<strong>URI: `GET` http://localhost:8000/api/users/all </strong>
 
 Function: Returns all users in the database. Only for users with role: 1
+
+Parameters:
+
+|Parameter|Type  |Description     |Required|
+|---------|------|----------------|--------|
+|`search` |string|Search query    |false   |
+|`company`|string|Company of users|false   |
+
+* Success response:
+  * Code: 200 OK
+  * Content: a list of all users
+* Error response (unauthorized):
+    * Code: 401 Unauthorized
+    * Content: Unauthorized
+* Error response (not found):
+  * Code: 404 Not found
+  * Content: empty
+
+<strong>URI: `GET` http://localhost:8000/api/users </strong>
+
+Function: Returns all users within the user company
 
 Parameters:
 
@@ -52,11 +73,11 @@ Parameters:
 |`search` |string|Search query|false   |
 
 * Success response:
-  * Code: 200 OK
-  * Content: a list of all users
+    * Code: 200 OK
+    * Content: a list of all users
 * Error response:
-  * Code: 404 Not found
-  * Content: empty
+    * Code: 404 Not found
+    * Content: empty
 
 <strong>URI: `GET` http://localhost:8000/api/users/{id} </strong>
 

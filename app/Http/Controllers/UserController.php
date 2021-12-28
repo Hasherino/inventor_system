@@ -28,7 +28,17 @@ class UserController extends Controller
         }
 
         $search = str_replace(' ', '', $request->search);
-        return User::whereRaw('CONCAT(first_name, last_name) ilike ? ', '%' . $search . '%')->get();
+        if(!$request->company) {
+            return User::whereRaw('CONCAT(first_name, last_name) like ? ', '%' . $search . '%')->get();
+        }
+        return User::where('company_id', $request->company)->
+                     whereRaw('CONCAT(first_name, last_name) like ? ', '%' . $search . '%')->get();
+    }
+
+    public function userIndex(Request $request) {
+        $company = $this->user->company()->get()->first()->id;
+        $search = str_replace(' ', '', $request->search);
+        return User::where('company_id', $company)->whereRaw('CONCAT(first_name, last_name) ilike ? ', '%' . $search . '%')->get();
     }
 
     public function show($id) {

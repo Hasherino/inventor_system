@@ -54,7 +54,7 @@ class GearController extends Controller
             ], 401);
         }
 
-        $userGear = User::find($id)->gear()->where('name', 'ilike', "%$request->search%")->get();
+        $userGear = User::find($id)->gear()->where('name', 'like', "%$request->search%")->get();
         foreach ($userGear as $gear) {
             $gear['own'] = 1;
         }
