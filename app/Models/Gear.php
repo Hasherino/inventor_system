@@ -25,6 +25,6 @@ class Gear extends Model
     }
 
     public function history() {
-        return $this->belongsToMany(Request::class);
+        return $this->hasMany(History::class);
     }
 }

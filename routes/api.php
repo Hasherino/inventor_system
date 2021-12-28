@@ -73,3 +73,4 @@ Route::post('reset-password', [PasswordResetRequestController::class, 'sendPassw
 Route::post('change-password', [ChangePasswordController::class, 'passwordResetProcess']);
 // History routes
 Route::get('history', [HistoryController::class, 'index']);
+Route::get('gearHistory/{id}', [HistoryController::class, 'gearIndex']);

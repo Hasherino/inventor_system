@@ -611,3 +611,15 @@ Event parameter explanation: </br>
 * Success response:
     * Code: 200 OK
     * Content: User's history
+
+<strong>URI: `GET` http://localhost:8000/api/gearHistory/{id} </strong>
+
+Function: Returns gear's with specified id history
+
+Event parameter explanation: </br>
+`0 = lent` `1 = returned` `2 = deleted`
+
+* Success response:
+    * Code: 200 OK
+    * Content: Gear's History
+

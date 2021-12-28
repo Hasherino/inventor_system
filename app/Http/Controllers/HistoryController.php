@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
+use App\Models\Gear;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -19,12 +20,19 @@ class HistoryController extends Controller
     public function index() {
         $history = $this->user->history()->get()->push();
 
-        $userGear = $this->user->gear();
+        $userGear = $this->user->gear()->get();
         foreach($userGear as $gear) {
-            $history = $history->push($gear->history());
+            $gearHistory = $gear->history()->get();
+            if (!$gearHistory->isEmpty()) {
+                $history = $history->push($gearHistory);
+            }
         }
 
         return $history->sortBy('created_at')->values();
+    }
+
+    public function gearIndex($id) {
+        return Gear::find($id)->history()->get();
     }
 
     public function store(Request $request) {
