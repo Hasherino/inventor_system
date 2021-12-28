@@ -18,6 +18,7 @@ class GearFactory extends Factory
         return [
             'user_id' => User::all()->random()->id,
             'name' => $this->faker->word(),
+            'description' => $this->faker->sentence,
             'code' => $this->faker->numberBetween(1, 5),
             'serial_number' => $this->faker->numberBetween(1, 1000000000),
             'unit_price' => $this->faker->numberBetween(5, 100),

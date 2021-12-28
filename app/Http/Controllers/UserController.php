@@ -29,16 +29,21 @@ class UserController extends Controller
 
         $search = str_replace(' ', '', $request->search);
         if(!$request->company) {
-            return User::whereRaw('CONCAT(first_name, last_name) like ? ', '%' . $search . '%')->get();
+            $users = User::whereRaw('CONCAT(first_name, last_name) ilike ? ', '%' . $search . '%')->get();
+        } else {
+            $users = User::where('company_id', $request->company)->
+                          whereRaw('CONCAT(first_name, last_name) ilike ? ', '%' . $search . '%')->get();
         }
-        return User::where('company_id', $request->company)->
-                     whereRaw('CONCAT(first_name, last_name) like ? ', '%' . $search . '%')->get();
+
+        return $this->gearCount($users);
     }
 
     public function userIndex(Request $request) {
         $company = $this->user->company()->get()->first()->id;
         $search = str_replace(' ', '', $request->search);
-        return User::where('company_id', $company)->whereRaw('CONCAT(first_name, last_name) ilike ? ', '%' . $search . '%')->get();
+        $users = User::where('company_id', $company)->
+                       whereRaw('CONCAT(first_name, last_name) ilike ? ', '%' . $search . '%')->get();
+        return $this->gearCount($users);
     }
 
     public function show($id) {
@@ -50,8 +55,15 @@ class UserController extends Controller
                 'message' => 'Sorry, user not found.'
             ], 404);
         }
-
+        $user['gear_count'] = $user->gear()->count();
         return $user;
+    }
+
+    public function gearCount($users) {
+        foreach($users as $user) {
+            $user['gear_count'] = $user->gear()->count();
+        }
+        return $users;
     }
 
     public function register(Request $request) {

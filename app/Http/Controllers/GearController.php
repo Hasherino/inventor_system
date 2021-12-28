@@ -19,7 +19,7 @@ class GearController extends Controller
     }
 
     public function userIndex(Request $request) {
-        $userGear = $this->user->gear()->where('name', 'like', "%$request->search%")->get();
+        $userGear = $this->user->gear()->where('name', 'ilike', "%$request->search%")->get();
         foreach ($userGear as $gear) {
             $gear['own'] = 1;
         }
@@ -54,7 +54,7 @@ class GearController extends Controller
             ], 401);
         }
 
-        $userGear = User::find($id)->gear()->where('name', 'like', "%$request->search%")->get();
+        $userGear = User::find($id)->gear()->where('name', 'ilike', "%$request->search%")->get();
         foreach ($userGear as $gear) {
             $gear['own'] = 1;
         }
@@ -72,9 +72,11 @@ class GearController extends Controller
     }
 
     public function store(Request $request) {
-        $data = $request->only('name', 'serial_number', 'unit_price', 'long_term', 'user_id');
+        $data = $request->only('name', 'description', 'code', 'serial_number', 'unit_price', 'long_term', 'user_id');
         $validator = Validator::make($data, [
             'name' => 'required|string',
+            'code' => 'required|string',
+            'description' => 'string',
             'serial_number' => 'string',
             'unit_price' => 'required|numeric',
             'long_term' => 'required|boolean',
@@ -129,9 +131,10 @@ class GearController extends Controller
     }
 
     public function update(Request $request, $id) {
-        $data = $request->only('name', 'serial_number', 'unit_price', 'long_term', 'lend_stage', 'user_id');
+        $data = $request->only('name', 'description', 'serial_number', 'unit_price', 'long_term', 'lend_stage', 'user_id');
         $validator = Validator::make($data, [
             'name' => 'string',
+            'description' => 'string',
             'serial_number' => 'string',
             'unit_price' => 'numeric',
             'long_term' => 'boolean',

@@ -12,7 +12,7 @@ class Gear extends Model
     protected $table = 'gear';
 
     protected $fillable = [
-        'name', 'user_id', 'unit_price', 'code',
+        'name', 'description', 'user_id', 'unit_price', 'code',
         'serial_number', 'long_term', 'lend_stage'
     ];
 

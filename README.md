@@ -377,6 +377,8 @@ Parameters:
 |Parameter      |Type  |Description           |Required|
 |---------------|------|----------------------|--------|
 |`name`         |string|Gear's name           |true    |
+|`code`         |string|Gear's code           |true    |
+|`description`  |string|Gear's description    |true    |
 |`serial_number`|string|Gear's serial number  |true    |
 |`unit_price`   |double|Unit price of the gear|true    |
 |`long_term`    |bool  |Is the gear long-term |true    |
@@ -400,6 +402,8 @@ Parameters:
 |Parameter      |Type  |Description           |Required|
 |---------------|------|----------------------|--------|
 |`name`         |string|Gear's name           |false   |
+|`code`         |string|Gear's code           |false    |
+|`description`  |string|Gear's description    |false    |
 |`serial_number`|string|Gear's serial number  |false   |
 |`unit_price`   |double|Unit price of the gear|false   |
 |`long_term`    |bool  |Is the gear long-term |false   |
