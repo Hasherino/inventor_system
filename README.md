@@ -370,7 +370,7 @@ Function: Returns the user's gear with the specified id
 
 <strong>URI: `POST` http://localhost:8000/api/gear </strong>
 
-Function: Creates a new gear. Only for users with roles: 1.
+Function: Creates a new gear.
 
 Parameters:
 
@@ -383,13 +383,14 @@ Parameters:
 |`unit_price`   |double|Unit price of the gear|true    |
 |`long_term`    |bool  |Is the gear long-term |true    |
 |`user_id`      |int   |Gear's owner's id     |false   |
+|`amount`       |int   |Quantity of the gear  |false   |
 
 * Success response:
     * Code: 201 Created
     * Content: The created gear
 * Error response:
-    * Code: 401 Unauthorized
-    * Content: "Not authorized"
+    * Code: 400 Bad request
+    * Content: Error specification
 
 #### PUT
 

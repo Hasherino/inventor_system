@@ -72,7 +72,7 @@ class GearController extends Controller
     }
 
     public function store(Request $request) {
-        $data = $request->only('name', 'description', 'code', 'serial_number', 'unit_price', 'long_term', 'user_id');
+        $data = $request->only('name', 'description', 'code', 'serial_number', 'unit_price', 'long_term', 'user_id', 'amount');
         $validator = Validator::make($data, [
             'name' => 'required|string',
             'code' => 'required|string',
@@ -80,15 +80,23 @@ class GearController extends Controller
             'serial_number' => 'string',
             'unit_price' => 'required|numeric',
             'long_term' => 'required|boolean',
-            'user_id' => 'required|integer'
+            'user_id' => 'required|integer',
+            'amount' => 'integer'
         ]);
 
         if ($validator->fails()) {
             return response()->json(['error' => $validator->messages()], 400);
         }
 
-        $gear = gear::create($request->all());
-        $gear->save();
+        if (!$request->amount) {
+            $gear = gear::create($request->all());
+            $gear->save();
+        } else {
+            for ($i = 0; $i < $request->amount; $i++) {
+                $gear = gear::create($request->all());
+                $gear->save();
+            }
+        }
 
         return response()->json([
             'success' => true,
