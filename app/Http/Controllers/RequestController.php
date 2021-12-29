@@ -145,6 +145,50 @@ class RequestController extends Controller
         ]);
     }
 
+    public function giveaway($id, Request $request) {
+        $data = $request->only('user_id');
+        $validator = Validator::make($data, [
+            'user_id' => 'integer|required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->messages()], 400);
+        }
+
+        if ($request->user_id == $this->user->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You cannot give gear to yourself.'
+            ], 400);
+        }
+
+        $gear = $this->user->gear()->find($id);
+        if (!$gear) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, gear not found.'
+            ], 404);
+        }
+
+        if(!\App\Models\Request::where('gear_id', $id)->get()->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gear already has a request'
+            ], 400);
+        }
+
+        \App\Models\Request::create([
+            'user_id' => $request->user_id,
+            'gear_id' => $id,
+            'status' => 3
+        ])->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Giveaway request sent.'
+        ]);
+    }
+
     public function update(Request $request, $id) {
         $userRequest = $this->user->request()->find($id);
 
