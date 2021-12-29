@@ -20,6 +20,6 @@ class History extends Model
     }
 
     public function gear() {
-        return $this->hasOne(Gear::class);
+        return $this->belongsTo(Gear::class);
     }
 }

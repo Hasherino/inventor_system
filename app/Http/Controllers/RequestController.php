@@ -19,29 +19,11 @@ class RequestController extends Controller
     }
 
     public function index() {
-        return $this->user->request()->get();
-    }
-
-    public function store(Request $request) {
-        $data = $request->only('user_id', 'gear_id', 'status');
-        $validator = Validator::make($data, [
-            'user_id' => 'required|integer',
-            'gear_id' => 'required|integer',
-            'status' => 'required|integer'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->messages()], 400);
+        $requests = $this->user->request()->get();
+        foreach($requests as $request) {
+            $request['gear'] = $request->gear()->get();
         }
-
-        $userRequest = \App\Models\Request::create($request->all());
-        $userRequest->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Request created successfully',
-            'data' => $userRequest
-        ], 201);
+        return $requests;
     }
 
     public function show($id) {
@@ -53,6 +35,8 @@ class RequestController extends Controller
                 'message' => 'Sorry, request not found.'
             ], 404);
         }
+
+        $request['gear'] = $request->gear()->get();
 
         return $request;
     }

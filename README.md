@@ -464,25 +464,6 @@ Function: Returns the request with the specified id
 
 #### POST
 
-<strong>URI: `POST` http://localhost:8000/api/requests </strong>
-
-Function: Creates a new request.
-
-Parameters:
-
-|Parameter|Type|Description                                                                |Required|
-|---------|----|---------------------------------------------------------------------------|--------|
-|`user_id`|int |Recipient's id                                                             |true    |
-|`gear_id`|int |Gear's id                                                                  |true    |
-|`status` |int |Status (0: lend request, 1:lent, 2:give-back request, 3: give-away request)|true    |
-
-* Success response:
-    * Code: 201 Created
-    * Content: The created request
-* Error response:
-    * Code: 401 Unauthorized
-    * Content: "Not authorized"
-
 <strong>URI: `POST` http://localhost:8000/api/requests/lend/{id} </strong>
 
 Function: Creates a request to lend gear (id in URI is the id of the gear to be lent)

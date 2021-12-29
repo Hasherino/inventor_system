@@ -52,7 +52,6 @@ Route::group(['prefix' => 'companies'], function () {
 Route::group(['prefix' => 'requests'], function () {
     Route::get('', [RequestController::class, 'index']);
     Route::get('{id}', [RequestController::class, 'show']);
-    Route::post('', [RequestController::class, 'store']);
     Route::post('lend/{id}',  [RequestController::class, 'lend']);
     Route::post('acceptLend/{id}', [RequestController::class, 'acceptLend']);
     Route::post('return/{id}', [RequestController::class, 'returnLend']);

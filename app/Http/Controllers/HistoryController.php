@@ -23,9 +23,13 @@ class HistoryController extends Controller
         $userGear = $this->user->gear()->get();
         foreach($userGear as $gear) {
             $gearHistory = $gear->history()->get();
-            if (!$gearHistory->isEmpty()) {
-                $history = $history->push($gearHistory);
+            foreach($gearHistory as $row) {
+                $history = $history->push($row);
             }
+        }
+
+        foreach($history as $row) {
+            $row['gear'] = $row->gear()->get();
         }
 
         return $history->sortBy('created_at')->values();
