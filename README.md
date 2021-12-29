@@ -530,6 +530,28 @@ Function: Accepts return request (id in URI is the id of the request that is bei
     * Code: 404 Not found
     * Content: "Sorry, request/gear not found"
 
+<strong>URI: `POST` http://localhost:8000/api/requests/giveaway/{id} </strong>
+
+Function: Gives away gear (id in URI is the id of the gear that is being gived away)
+
+* Success response:
+    * Code: 200 OK
+    * Content: "Giveaway request created"
+* Error response:
+    * Code: 404 Not found
+    * Content: "Sorry, gear not found"
+
+<strong>URI: `POST` http://localhost:8000/api/requests/acceptGiveaway/{id} </strong>
+
+Function: Accepts giveaway request (id in URI is the id of the request that is being accepted)
+
+* Success response:
+    * Code: 200 OK
+    * Content: "Giveaway request accepted"
+* Error response:
+    * Code: 404 Not found
+    * Content: "Sorry, request/gear not found"
+
 #### DELETE
 
 <strong>URI: `DELETE` http://localhost:8000/api/requests/{id} </strong>
