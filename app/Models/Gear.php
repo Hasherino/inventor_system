@@ -13,7 +13,7 @@ class Gear extends Model
 
     protected $fillable = [
         'name', 'description', 'user_id', 'unit_price', 'code',
-        'serial_number', 'long_term', 'lend_stage'
+        'serial_number', 'long_term', 'lent'
     ];
 
     public function user() {

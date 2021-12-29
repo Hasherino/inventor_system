@@ -97,7 +97,7 @@ class RequestController extends Controller
 
     public function acceptLend($id) {
         $request = $this->user->request()->find($id);
-        if (!$request) {
+        if (!$request or $request['status'] != 0) {
             return response()->json([
                 'success' => false,
                 'message' => 'Sorry, request not found.'
@@ -135,6 +135,31 @@ class RequestController extends Controller
             ], 404);
         }
 
+        $request->update(['status' => 2]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Return request created'
+        ]);
+    }
+
+    public function acceptReturnLend($id) {
+        $request = \App\Models\Request::find($id);
+        if (!$request or $request->status != 2) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, request not found.'
+            ], 404);
+        }
+        $user = $request->gear()->get()->first()->user()->get()->first()->id;
+        if ($user != $this->user->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, request not found.'
+            ], 404);
+        }
+
+        $gear = $request->gear()->get()->first();
         $gear->update(['lent' => 0]);
         $request->delete();
         History::create(['gear_id' => $gear->id, 'user_id' => $this->user->id, 'event' => 1]);
@@ -170,6 +195,13 @@ class RequestController extends Controller
             ], 404);
         }
 
+        if ($gear['lent'] == 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You cannot give away lent gear'
+            ], 404);
+        }
+
         if(!\App\Models\Request::where('gear_id', $id)->get()->isEmpty()) {
             return response()->json([
                 'success' => false,
@@ -186,6 +218,29 @@ class RequestController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Giveaway request sent.'
+        ]);
+    }
+
+    public function acceptGiveaway($id) {
+        $request = $this->user->request()->find($id);
+        if (!$request or $request['status'] != 3) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, request not found.'
+            ], 404);
+        }
+
+        $request->gear()->update(['user_id' => $this->user->id]);
+        $request->delete();
+        History::create([
+            'user_id' => $this->user->id,
+            'gear_id' => $request->gear()->get()->first()->id,
+            'event' => 2
+        ])->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Giveaway request accepted.'
         ]);
     }
 

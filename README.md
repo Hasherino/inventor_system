@@ -31,7 +31,6 @@
 - [Requests](#requests)
   * [GET](#get-4)
   * [POST](#post-4)
-  * [PUT](#put-3)
   * [DELETE](#delete-3)
 - [Password reset](#password-reset)
   * [POST](#post-5)
@@ -509,9 +508,20 @@ Function: Accepts a lend request (id in URI is the id of the lend request)
     * Code: 404 Not found
     * Content: "Sorry, request not found"
 
-<strong>URI: `POST` http://localhost:8000/api/requests/returnLend/{id} </strong>
+<strong>URI: `POST` http://localhost:8000/api/requests/return/{id} </strong>
 
 Function: Returns lent gear (id in URI is the id of the gear that is being returned)
+
+* Success response:
+    * Code: 200 OK
+    * Content: "Return request created"
+* Error response:
+    * Code: 404 Not found
+    * Content: "Sorry, request/gear not found"
+
+<strong>URI: `POST` http://localhost:8000/api/requests/acceptReturn/{id} </strong>
+
+Function: Accepts return request (id in URI is the id of the request that is being accepted)
 
 * Success response:
     * Code: 200 OK
@@ -519,25 +529,6 @@ Function: Returns lent gear (id in URI is the id of the gear that is being retur
 * Error response:
     * Code: 404 Not found
     * Content: "Sorry, request/gear not found"
-
-#### PUT
-
-<strong>URI: `PUT` http://localhost:8000/api/requests/{id} </strong>
-
-Function: Updates the request with the specified id (if the request belongs to the user or user's gear).
-
-Parameters:
-
-|Parameter|Type|Description                                                                |Required|
-|---------|----|---------------------------------------------------------------------------|--------|
-|`status` |int |Status (0: lend request, 1:lent, 2:give-back request, 3: give-away request)|true    |
-
-* Success response:
-    * Code: 200 OK
-    * Content: "Request updated successfully."
-* Error response:
-    * Code: 404 Unauthorized
-    * Content: "Sorry, request not found."
 
 #### DELETE
 
@@ -595,7 +586,7 @@ Function: Changes user's password to a new one
 Function: Returns user's history
 
 Event parameter explanation: </br>
-`0 = lent` `1 = returned` `2 = deleted`
+`0 = lent` `1 = returned` `2 = gave away` `3 = deleted`
 
 * Success response:
     * Code: 200 OK
