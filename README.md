@@ -451,6 +451,14 @@ Function: Returns all user's requests
     * Code: 200 OK
     * Content: A list of all user's requests
 
+<strong>URI: `GET` http://localhost:8000/api/requests/pendingLends </strong>
+
+Function: Returns all user's pending lends
+
+* Success response:
+    * Code: 200 OK
+    * Content: A list of all user's pending lends
+
 <strong>URI: `GET` http://localhost:8000/api/requests/{id} </strong>
 
 Function: Returns the request with the specified id

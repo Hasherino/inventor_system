@@ -22,6 +22,16 @@ class RequestController extends Controller
         $requests = $this->user->request()->get();
         foreach($requests as $request) {
             $request['gear'] = $request->gear()->get();
+            $request['lender_id'] = $request['gear']->first()->user_id;
+        }
+        return $requests;
+    }
+
+    public function pendingLends() {
+        $requests = $this->user->request()->where('status', 0)->get();
+        foreach($requests as $request) {
+            $request['gear'] = $request->gear()->get();
+            $request['lender_id'] = $request['gear']->first()->user_id;
         }
         return $requests;
     }
