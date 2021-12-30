@@ -244,7 +244,7 @@ class RequestController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Gear ownership changed.'
-        ], 401);
+        ], 200);
     }
 
     public function destroy($id) {
