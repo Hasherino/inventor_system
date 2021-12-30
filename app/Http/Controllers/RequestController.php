@@ -232,6 +232,12 @@ class RequestController extends Controller
         if (!!$error) {
             return $error;
         }
+        if ($gear->user_id == $this->user->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You already own that gear'
+            ], 400);
+        }
 
         $gear->update(['user_id' => $this->user->id]);
 
@@ -295,13 +301,6 @@ class RequestController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Gear already has a request'
-            ], 400);
-        }
-
-        if ($gear->user_id == $this->user->id) {
-            return response()->json([
-                'success' => false,
-                'message' => 'You already own that gear'
             ], 400);
         }
     }
