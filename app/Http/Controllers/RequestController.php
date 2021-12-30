@@ -69,18 +69,9 @@ class RequestController extends Controller
         }
 
         $gear = $this->user->gear()->find($id);
-        if (!$gear) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Sorry, gear not found.'
-            ], 404);
-        }
-
-        if(!\App\Models\Request::where('gear_id', $id)->get()->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gear already has a request'
-            ], 400);
+        $error = $this->statusCheck($gear);
+        if (!!$error) {
+            return $error;
         }
 
         \App\Models\Request::create([
@@ -186,33 +177,10 @@ class RequestController extends Controller
             return response()->json(['error' => $validator->messages()], 400);
         }
 
-        if ($request->user_id == $this->user->id) {
-            return response()->json([
-                'success' => false,
-                'message' => 'You cannot give gear to yourself.'
-            ], 400);
-        }
-
         $gear = $this->user->gear()->find($id);
-        if (!$gear) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Sorry, gear not found.'
-            ], 404);
-        }
-
-        if ($gear['lent'] == 1) {
-            return response()->json([
-                'success' => false,
-                'message' => 'You cannot give away lent gear'
-            ], 404);
-        }
-
-        if(!\App\Models\Request::where('gear_id', $id)->get()->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gear already has a request'
-            ], 400);
+        $error = $this->statusCheck($gear);
+        if (!!$error) {
+            return $error;
         }
 
         \App\Models\Request::create([
@@ -251,43 +219,26 @@ class RequestController extends Controller
         ]);
     }
 
-    public function update(Request $request, $id) {
-        $userRequest = $this->user->request()->find($id);
-
-        if (!$userRequest) {
-            $gears = $this->user->gear()->get();
-            foreach($gears as $gear) {
-                $userRequest = $gear->request()->find($id);
-                if ($userRequest) {
-                    break;
-                }
-            }
-        }
-
-        if (!$userRequest) {
+    public function giveawayToYourself($id) {
+        if ($this->user->role == 0) {
             return response()->json([
                 'success' => false,
-                'message' => 'Sorry, request not found.'
-            ], 404);
+                'message' => 'Not authorized'
+            ], 401);
         }
 
-        $data = $request->only('status');
-        $validator = Validator::make($data, [
-            'status' => 'required|integer'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->messages()], 400);
+        $gear = Gear::where('id', $id)->get()->first();
+        $error = $this->statusCheck($gear);
+        if (!!$error) {
+            return $error;
         }
 
-        $userRequest->fill($request->all());
-        $userRequest->save();
+        $gear->update(['user_id' => $this->user->id]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Request updated successfully',
-            'data' => $userRequest
-        ]);
+            'message' => 'Gear ownership changed.'
+        ], 401);
     }
 
     public function destroy($id) {
@@ -323,5 +274,35 @@ class RequestController extends Controller
             'success' => true,
             'message' => 'Request deleted successfully'
         ]);
+    }
+
+    public function statusCheck($gear) {
+        if (!$gear) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, gear not found.'
+            ], 404);
+        }
+
+        if ($gear['lent'] == 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You cannot give away lent gear'
+            ], 404);
+        }
+
+        if (!\App\Models\Request::where('gear_id', $gear->id)->get()->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gear already has a request'
+            ], 400);
+        }
+
+        if ($gear->user_id == $this->user->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You already own that gear'
+            ], 400);
+        }
     }
 }

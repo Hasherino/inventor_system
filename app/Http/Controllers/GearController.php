@@ -188,6 +188,20 @@ class GearController extends Controller
             ], 404);
         }
 
+        if ($gear['lent'] == 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You cannot destroy lent gear'
+            ], 404);
+        }
+
+        if (!\App\Models\Request::where('gear_id', $gear->id)->get()->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gear has a request'
+            ], 400);
+        }
+
         $gear->delete();
 
         return response()->json([
