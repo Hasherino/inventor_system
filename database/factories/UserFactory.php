@@ -22,7 +22,7 @@ class UserFactory extends Factory
 //            'company_id' => $this->faker->numberBetween(1,5),
             'first_name' => 'admin',
             'last_name' => 'admin',
-            'email' => 'admin@g.com',
+            'email' => 'admin@gmail.com',
             'role' => 1,
             'company_id' => 1,
             'email_verified_at' => now(),
