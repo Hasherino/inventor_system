@@ -15,7 +15,8 @@ class CreateHistoryTable extends Migration
     {
         Schema::create('history', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('user_id')->nullable();
+            $table->unsignedInteger('user_id');
+            $table->unsignedInteger('sender_id');
             $table->unsignedInteger('gear_id');
             $table->integer('event');
             $table->timestamps();

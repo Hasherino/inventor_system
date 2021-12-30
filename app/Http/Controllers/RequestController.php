@@ -108,6 +108,7 @@ class RequestController extends Controller
         $request->update(['status' => 1]);
         History::create([
             'user_id' => $this->user->id,
+            'sender_id' => $request->gear()->get()->first()->user_id,
             'gear_id' => $request->gear()->get()->first()->id,
             'event' => 0
         ])->save();
@@ -162,7 +163,12 @@ class RequestController extends Controller
         $gear = $request->gear()->get()->first();
         $gear->update(['lent' => 0]);
         $request->delete();
-        History::create(['gear_id' => $gear->id, 'user_id' => $this->user->id, 'event' => 1]);
+        History::create([
+            'gear_id' => $gear->id,
+            'user_id' => $this->user->id,
+            'sender_id' => $gear->user_id,
+            'event' => 1
+        ]);
 
         return response()->json([
             'success' => true,
@@ -229,11 +235,12 @@ class RequestController extends Controller
                 'message' => 'Sorry, request not found.'
             ], 404);
         }
-
+        $ownerId = $request->gear()->get()->first()->user_id;
         $request->gear()->update(['user_id' => $this->user->id]);
         $request->delete();
         History::create([
             'user_id' => $this->user->id,
+            'sender_id' => $ownerId,
             'gear_id' => $request->gear()->get()->first()->id,
             'event' => 2
         ])->save();

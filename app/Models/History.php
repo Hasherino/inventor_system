@@ -12,7 +12,7 @@ class History extends Model
     protected $table = 'history';
 
     protected $fillable = [
-        'user_id', 'gear_id', 'event'
+        'user_id', 'sender_id', 'gear_id', 'event'
     ];
 
     public function user() {
