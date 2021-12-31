@@ -45,8 +45,27 @@ class GearController extends Controller
             ], 401);
         }
 
-        $userGear = User::find($id)->gear()->where('name', 'ilike', "%$request->search%")->get();
-        $userGear = $this->addLentGear($userGear);
+        $selectedUser = User::find($id);
+        $userGear = $selectedUser->gear()->where('name', 'ilike', "%$request->search%")->get();
+
+        foreach ($userGear as $gear) {
+            $gear['own'] = 1;
+        }
+
+        $requests = $selectedUser->request()->get();
+        $validRequests = [];
+        foreach($requests as $request) {
+            if ($request->status == 1 or
+                ($request->status == 2 and $request->gear()->get()->first()->user_id != $id)) {
+                $validRequests[] = $request;
+            }
+        }
+
+        foreach ($validRequests as $request) {
+            $gear = $request->gear()->first();
+            $gear['own'] = 0;
+            $userGear = $userGear->push($gear);
+        }
 
         $userGear = $this->groupByCode($userGear);
 
