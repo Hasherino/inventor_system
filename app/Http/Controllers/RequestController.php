@@ -28,7 +28,7 @@ class RequestController extends Controller
     }
 
     public function pendingRequests() {
-        $requests = $this->user->request()->where('status', 0)->orWhere('status', 3)->get();
+        $requests = \App\Models\Request::where('status', 0)->orWhere('status', 3)->get()->where('user_id', $this->user->id);
 
         foreach (\App\Models\Request::all() as $request) {
             if ($request->gear()->first()->user_id == $this->user->id and $request->status == 2) {
@@ -174,10 +174,11 @@ class RequestController extends Controller
 
         $gear = $request->gear()->get()->first();
         $gear->update(['lent' => 0]);
+        $senderId = $request->user_id;
         $request->delete();
         History::create([
             'gear_id' => $gear->id,
-            'user_id' => $this->user->id,
+            'user_id' => $senderId,
             'sender_id' => $gear->user_id,
             'event' => 1
         ]);
