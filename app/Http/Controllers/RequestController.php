@@ -288,7 +288,7 @@ class RequestController extends Controller
             ], 404);
         }
 
-        if ($request->status != 1) {
+        if ($request->status == 1) {
             return response()->json([
                 'success' => false,
                 'message' => 'Cannot delete this request'
