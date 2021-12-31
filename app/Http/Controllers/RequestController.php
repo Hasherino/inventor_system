@@ -27,8 +27,15 @@ class RequestController extends Controller
         return $requests;
     }
 
-    public function pendingLends() {
-        $requests = $this->user->request()->where('status', 0)->get();
+    public function pendingRequests() {
+        $requests = $this->user->request()->where('status', 0)->orWhere('status', 3)->get();
+
+        foreach (\App\Models\Request::all() as $request) {
+            if ($request->gear()->first()->user_id == $this->user->id and $request->status == 2) {
+                $requests = $requests->push($request);
+            }
+        }
+
         foreach($requests as $request) {
             $request['gear'] = $request->gear()->get();
             $request['lender_id'] = $request['gear']->first()->user_id;

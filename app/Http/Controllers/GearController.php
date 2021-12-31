@@ -215,7 +215,7 @@ class GearController extends Controller
             $gear['own'] = 1;
         }
 
-        $requests = $this->user->request()->where('status', 1)->get();
+        $requests = $this->user->request()->where('status', 1)->orWhere('status', 2)->get();
         foreach ($requests as $request) {
             $gear = $request->gear()->first();
             $gear['own'] = 0;

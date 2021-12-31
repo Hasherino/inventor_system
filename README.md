@@ -442,6 +442,8 @@ Function: Deletes the gear with the specified id. Only for users with role: 1.
 ### Requests
 #### GET
 
+Status reference: `0 = pending lend` `1 = lent` `2 = pending return` `3 = pending giveaway`
+
 <strong>URI: `GET` http://localhost:8000/api/requests </strong>
 
 Function: Returns all user's requests
@@ -450,13 +452,13 @@ Function: Returns all user's requests
     * Code: 200 OK
     * Content: A list of all user's requests
 
-<strong>URI: `GET` http://localhost:8000/api/requests/pendingLends </strong>
+<strong>URI: `GET` http://localhost:8000/api/requests/pending </strong>
 
-Function: Returns all user's pending lends
+Function: Returns all user's pending requests
 
 * Success response:
     * Code: 200 OK
-    * Content: A list of all user's pending lends
+    * Content: A list of all user's pending requests
 
 <strong>URI: `GET` http://localhost:8000/api/requests/{id} </strong>
 
