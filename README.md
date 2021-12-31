@@ -515,9 +515,12 @@ Function: Returns lent gear (id in URI is the id of the gear that is being retur
 * Success response:
     * Code: 200 OK
     * Content: "Return request created"
-* Error response:
+* Error response (not found):
     * Code: 404 Not found
     * Content: "Sorry, request/gear not found"
+* Error response:
+    * Code: 400 Bad request
+    * Content: Error message
 
 <strong>URI: `POST` http://localhost:8000/api/requests/acceptReturn/{id} </strong>
 
@@ -537,9 +540,12 @@ Function: Gives away gear (id in URI is the id of the gear that is being gived a
 * Success response:
     * Code: 200 OK
     * Content: "Giveaway request created"
-* Error response:
+* Error response (not found):
     * Code: 404 Not found
     * Content: "Sorry, gear not found"
+* Error response:
+    * Code: 400 Bad request
+    * Content: Error message
 
 <strong>URI: `POST` http://localhost:8000/api/requests/acceptGiveaway/{id} </strong>
 
@@ -551,6 +557,20 @@ Function: Accepts giveaway request (id in URI is the id of the request that is b
 * Error response:
     * Code: 404 Not found
     * Content: "Sorry, request/gear not found"
+
+<strong>URI: `POST` http://localhost:8000/api/requests/giveYourself/{id} </strong>
+
+Function: Give yourself any gear. Only for users with role: 1.
+
+* Success response:
+    * Code: 200 OK
+    * Content: "Giveaway request accepted"
+* Error response (not found):
+    * Code: 404 Not found
+    * Content: "Sorry, gear not found"
+* Error response:
+    * Code: 400 Bad request
+    * Content: Error message
 
 #### DELETE
 

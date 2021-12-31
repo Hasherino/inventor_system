@@ -68,10 +68,22 @@ class RequestController extends Controller
             ], 400);
         }
 
-        $gear = $this->user->gear()->find($id);
-        $error = $this->statusCheck($gear);
-        if (!!$error) {
-            return $error;
+        $userGear = $this->user->gear()->get();
+        $userGear = app('App\Http\Controllers\GearController')->addLentGear($userGear);
+        $gear = $userGear->find($id);
+
+        if (!$gear) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, gear not found.'
+            ], 404);
+        }
+
+        if ($request->user_id == $gear->user_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This user owns this gear'
+            ], 400);
         }
 
         \App\Models\Request::create([
@@ -111,7 +123,9 @@ class RequestController extends Controller
     }
 
     public function returnLend($id) {
-        $request = $this->user->request()->where('gear_id', $id)->first();
+        $requests = \App\Models\Request::where('gear_id', $id)->get();
+        $request = $requests->where('user_id', $this->user->id)->where('created_at', $requests->max('created_at'))->first();
+
         if (!$request or $request->status != 1) {
             return response()->json([
                 'success' => false,

@@ -20,16 +20,7 @@ class GearController extends Controller
 
     public function userIndex(Request $request) {
         $userGear = $this->user->gear()->where('name', 'ilike', "%$request->search%")->get();
-        foreach ($userGear as $gear) {
-            $gear['own'] = 1;
-        }
-
-        $requests = $this->user->request()->where('status', 1)->get();
-        foreach ($requests as $request) {
-            $gear = $request->gear()->first();
-            $gear['own'] = 0;
-            $userGear = $userGear->push($gear);
-        }
+        $userGear = $this->addLentGear($userGear);
 
         $userGear = $this->groupByCode($userGear);
 
@@ -55,16 +46,7 @@ class GearController extends Controller
         }
 
         $userGear = User::find($id)->gear()->where('name', 'ilike', "%$request->search%")->get();
-        foreach ($userGear as $gear) {
-            $gear['own'] = 1;
-        }
-
-        $requests = $this->user->request()->where('status', 1);
-        foreach ($requests as $request) {
-            $gear = $request->gear()->first();
-            $gear['own'] = 0;
-            $userGear = $userGear->push($gear);
-        }
+        $userGear = $this->addLentGear($userGear);
 
         $userGear = $this->groupByCode($userGear);
 
@@ -126,16 +108,19 @@ class GearController extends Controller
     }
 
     public function userShow($id) {
-        $gear = $this->user->gear()->find($id);
+        $userGear = $this->user->gear()->get();
+        $userGear = $this->addLentGear($userGear);
 
-        if (!$gear) {
+        $selectedGear = $userGear->find($id);
+
+        if (!$selectedGear) {
             return response()->json([
                 'success' => false,
                 'message' => 'Sorry, gear not found.'
             ], 404);
         }
 
-        return $gear;
+        return $selectedGear;
     }
 
     public function update(Request $request, $id) {
@@ -223,5 +208,20 @@ class GearController extends Controller
         }
 
         return $final;
+    }
+
+    public function addLentGear($userGear) {
+        foreach ($userGear as $gear) {
+            $gear['own'] = 1;
+        }
+
+        $requests = $this->user->request()->where('status', 1)->get();
+        foreach ($requests as $request) {
+            $gear = $request->gear()->first();
+            $gear['own'] = 0;
+            $userGear = $userGear->push($gear);
+        }
+
+        return $userGear;
     }
 }
