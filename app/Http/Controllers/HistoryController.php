@@ -33,7 +33,7 @@ class HistoryController extends Controller
     }
 
     public function gearIndex($id) {
-        return Gear::find($id)->history()->get()->sortByDesc('created_at');
+        return Gear::find($id)->history()->get()->sortByDesc('created_at')->values();
     }
 
     public function store(Request $request) {
