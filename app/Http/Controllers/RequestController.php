@@ -40,7 +40,7 @@ class RequestController extends Controller
             $request['gear'] = $request->gear()->get();
             $request['lender_id'] = $request['gear']->first()->user_id;
         }
-        return $requests;
+        return $requests->values();
     }
 
     public function show($id) {
