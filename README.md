@@ -353,6 +353,17 @@ Function: Returns the gear with the specified id. Only for users with role: 1.
     * Code: 404 Not Found
     * Content: "Sorry, gear not found"
 
+<strong>URI: `GET` http://localhost:8000/api/gear/code/{code} </strong>
+
+Function: Returns the user's gear with the specified code
+
+* Success response:
+    * Code: 200 OK
+    * Content: The gear with the specified code
+* Error response:
+    * Code: 404 Not Found
+    * Content: "Sorry, gear not found"
+
 <strong>URI: `GET` http://localhost:8000/api/gear/{id} </strong>
 
 Function: Returns the user's gear with the specified id

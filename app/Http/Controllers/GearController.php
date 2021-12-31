@@ -78,25 +78,30 @@ class GearController extends Controller
             'name' => 'required|string',
             'code' => 'required|string',
             'description' => 'string',
-            'serial_number' => 'string',
+            'serial_number' => 'string|unique:gear',
             'unit_price' => 'required|numeric',
             'long_term' => 'required|boolean',
             'user_id' => 'required|integer',
-            'amount' => 'integer'
+            'amount' => 'required|integer|max:50'
         ]);
 
         if ($validator->fails()) {
             return response()->json(['error' => $validator->messages()], 400);
         }
 
-        if (!$request->amount) {
-            $gear = gear::create($request->all());
-            $gear->save();
-        } else {
-            for ($i = 0; $i < $request->amount; $i++) {
-                $gear = gear::create($request->all());
-                $gear->save();
+        for ($i = 0; $i < $request->amount; $i++) {
+            $gear = Gear::create($request->all());
+            $sameGear = Gear::where('code', $gear->code)->get()->first();
+
+            if(!!$sameGear and ($sameGear->name != $gear->name or
+                                $sameGear->description != $gear->description or
+                                $sameGear->unit_price != $gear->unit_price)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gear does not match with other ones with the same code',
+                ], 400);
             }
+            $gear->save();
         }
 
         return response()->json([
@@ -114,7 +119,20 @@ class GearController extends Controller
             ], 401);
         }
 
-        $gear = gear::find($id);
+        $gear = Gear::find($id);
+
+        if (!$gear) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, gear not found.'
+            ], 404);
+        }
+
+        return $gear;
+    }
+
+    public function showByCode($code) {
+        $gear = Gear::where('code', $code)->get()->first();
 
         if (!$gear) {
             return response()->json([
@@ -218,12 +236,9 @@ class GearController extends Controller
         $userGear = $userGear->groupBy('code')->values();
         $final = [];
         foreach ($userGear as $group) {
-            $gearCollection = collect($group);
             $gear = $group->first();
-            $name = $gear->name;
-            $code = $gear->code;
-            $count = $group->count();
-            $final[] = collect(['name' => $name, 'code' => $code, 'count' => $count, 'gear' => $gearCollection]);
+            $final[] = collect(['name' => $gear->name, 'code' => $gear->code, 'count' => $group->count(),
+                                'gear' => collect($group)]);
         }
 
         return $final;
