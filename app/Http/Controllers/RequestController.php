@@ -198,6 +198,30 @@ class RequestController extends Controller
         ]);
     }
 
+    public function declineReturnLend($id) {
+        $request = \App\Models\Request::find($id);
+        if (!$request or $request->status != 2) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, request not found.'
+            ], 404);
+        }
+        $user = $request->gear()->get()->first()->user()->get()->first()->id;
+        if ($user != $this->user->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, request not found.'
+            ], 404);
+        }
+
+        $request->update(['status' => 1]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Return request declined'
+        ]);
+    }
+
     public function giveaway($id, Request $request) {
         $data = $request->only('user_id');
         $validator = Validator::make($data, [

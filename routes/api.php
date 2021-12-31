@@ -60,6 +60,7 @@ Route::group(['prefix' => 'requests'], function () {
     Route::post('giveaway/{id}', [RequestController::class, 'giveaway']);
     Route::post('acceptGiveaway/{id}', [RequestController::class, 'acceptGiveaway']);
     Route::post('giveYourself/{id}', [RequestController::class, 'giveawayToYourself']);
+    Route::post('declineReturn/{id}', [RequestController::class, 'declineReturnLend']);
     Route::delete('{id}',  [RequestController::class, 'destroy']);
 });
 // User controller routes

@@ -19,7 +19,7 @@ class GearController extends Controller
     }
 
     public function userIndex(Request $request) {
-        $userGear = $this->user->gear()->where('name', 'ilike', "%$request->search%")->get();
+        $userGear = $this->user->gear()->where('name', 'like', "%$request->search%")->get();
         $userGear = $this->addLentGear($userGear);
 
         $userGear = $this->groupByCode($userGear);

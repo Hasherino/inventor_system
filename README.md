@@ -535,6 +535,17 @@ Function: Accepts return request (id in URI is the id of the request that is bei
     * Code: 404 Not found
     * Content: "Sorry, request/gear not found"
 
+<strong>URI: `POST` http://localhost:8000/api/requests/declineReturn/{id} </strong>
+
+Function: Declines return request (id in URI is the id of the request that is being accepted)
+
+* Success response:
+    * Code: 200 OK
+    * Content: "Return declined"
+* Error response:
+    * Code: 404 Not found
+    * Content: "Sorry, request/gear not found"
+
 <strong>URI: `POST` http://localhost:8000/api/requests/giveaway/{id} </strong>
 
 Function: Gives away gear (id in URI is the id of the gear that is being gived away)
