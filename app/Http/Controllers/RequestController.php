@@ -269,20 +269,13 @@ class RequestController extends Controller
     }
 
     public function destroy($id) {
-        if ($this->user->role == 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Not authorized'
-            ], 401);
-        }
-
         $request = $this->user->request()->find($id);
 
         if (!$request) {
             $gears = $this->user->gear()->get();
             foreach($gears as $gear) {
                 $request = $gear->request()->find($id);
-                if ($request) {
+                if (!!$request) {
                     break;
                 }
             }
@@ -293,6 +286,13 @@ class RequestController extends Controller
                 'success' => false,
                 'message' => 'Sorry, request not found.'
             ], 404);
+        }
+
+        if ($request->status != 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cannot delete this request'
+            ], 400);
         }
 
         $request->delete();
