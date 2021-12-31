@@ -75,7 +75,7 @@ class RequestController extends Controller
             ], 400);
         }
 
-        $userGear = $this->user->gear()->get();
+        $userGear = $this->user->gear()->get()->where('lent', 0);
         $userGear = app('App\Http\Controllers\GearController')->addLentGear($userGear);
         $gear = $userGear->find($id);
 
@@ -90,6 +90,15 @@ class RequestController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'This user owns this gear'
+            ], 400);
+        }
+
+        $gearRequest = \App\Models\Request::where('gear_id', $gear->id)->get();
+        if (!$gearRequest->isEmpty() and
+            $gearRequest->first()->status != 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gear already has a request'
             ], 400);
         }
 
