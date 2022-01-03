@@ -17,6 +17,7 @@ class CreateHistoryTable extends Migration
             $table->id();
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('sender_id');
+            $table->unsignedInteger('owner_id');
             $table->unsignedInteger('gear_id');
             $table->integer('event');
             $table->timestamps();

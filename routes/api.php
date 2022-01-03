@@ -34,9 +34,10 @@ Route::group(['prefix' => 'gear'], function () {
     Route::get('all', [GearController::class, 'index']);
     Route::get('', [GearController::class, 'userIndex']);
     Route::get('user/{id}', [GearController::class, 'selectedIndex']);
-    Route::get('{id}', [GearController::class, 'userShow']);
     Route::get('code/{code}', [GearController::class, 'showByCode']);
     Route::get('all/{id}', [GearController::class, 'show']);
+    Route::get('pdf/{id}', [GearController::class, 'generatePDF']);
+    Route::get('{id}', [GearController::class, 'userShow']);
     Route::post('', [GearController::class, 'store']);
     Route::put('{id}',  [GearController::class, 'update']);
     Route::delete('{id}',  [GearController::class, 'destroy']);

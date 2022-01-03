@@ -9,7 +9,7 @@ class Request extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'gear_id', 'status',];
+    protected $fillable = ['user_id', 'sender_id', 'gear_id', 'status',];
 
     public function user() {
         return $this->belongsTo(User::class);

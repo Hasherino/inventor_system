@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Gear;
 use App\Models\User;
+use PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -230,6 +231,44 @@ class GearController extends Controller
             'success' => true,
             'message' => 'Gear deleted successfully'
         ]);
+    }
+
+    public function generatePDF($id) {
+        $gear = Gear::find($id);
+
+        if ($gear->user_id != $this->user->id and $this->user->role == 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Not authorized'
+            ], 401);
+        }
+
+        $user = $gear->user()->get()->first();
+        $gear['owner'] = $user->first_name.' '.$user->last_name;
+
+        $history = $gear->history()->get()->sortByDesc('created_at');
+        foreach ($history as $row) {
+            $owner = User::find($row->owner_id);
+            $sender = User::find($row->sender_id);
+            $user = User::find($row->user_id);
+            $row['owner'] = $owner->first_name.' '.$owner->last_name;
+            $row['sender'] = $sender->first_name.' '.$sender->last_name;
+            $row['user'] = $user->first_name.' '.$user->last_name;
+        }
+
+        $data['gear'] = $gear;
+        $data['history'] = $history;
+
+
+
+
+        $pdf = PDF::loadView('pdf', $data);
+
+        $dom_pdf = $pdf->getDomPDF();
+        $canvas = $dom_pdf ->get_canvas();
+        $canvas->page_text(50, 20, "Page {PAGE_NUM} of {PAGE_COUNT}", null, 10, array(0, 0, 0));
+
+        return $pdf->download('pdf_file.pdf');
     }
 
     public function groupByCode($userGear) {

@@ -16,6 +16,7 @@ class CreateRequestsTable extends Migration
         Schema::create('requests', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('user_id');
+            $table->unsignedInteger('sender_id');
             $table->unsignedInteger('gear_id');
             $table->integer('status');
             $table->timestamps();

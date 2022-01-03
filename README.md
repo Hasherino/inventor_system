@@ -375,6 +375,22 @@ Function: Returns the user's gear with the specified id
     * Code: 404 Not Found
     * Content: "Sorry, gear not found"
 
+<strong>URI: `GET` http://localhost:8000/api/gear/pdf </strong>
+
+Function: Generates a pdf of user's gear
+
+Parameters:
+
+|Parameter|Type|Description                |Required|
+|---------|----|---------------------------|--------|
+|`user_id`|int |User's id (only for admins)|false   |
+
+* Success response:
+    * Code: 200 OK
+    * Content: The generated pdf
+* Error response:
+    * Code: 401 Unauthorized
+    * Content: "Not authorized"
 
 #### POST
 
