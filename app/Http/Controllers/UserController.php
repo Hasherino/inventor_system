@@ -20,12 +20,8 @@ class UserController extends Controller
     }
 
     public function index(Request $request) {
-        if ($this->user->role == 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Not authorized'
-            ], 401);
-        }
+        if(!!$error = $this->authorityCheck())
+            return $error;
 
         $search = str_replace(' ', '', $request->search);
         if(!$request->company) {
@@ -67,12 +63,8 @@ class UserController extends Controller
     }
 
     public function register(Request $request) {
-        if ($this->user->role == 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Not authorized'
-            ], 401);
-        }
+        if(!!$error = $this->authorityCheck())
+            return $error;
 
         $validator = Validator::make($request->all(), [
             'first_name' => 'required|string',
@@ -113,6 +105,9 @@ class UserController extends Controller
             return response()->json(['error' => $validator->messages()], 400);
         }
 
+        if (!!$request->role and !!$error = $this->authorityCheck())
+            return $error;
+
         $user = User::find($id);
 
         if (!$user) {
@@ -133,6 +128,9 @@ class UserController extends Controller
     }
 
     public function destroy($id) {
+        if(!!$error = $this->authorityCheck())
+            return $error;
+
         $user = User::find($id);
 
         if (!$user) {

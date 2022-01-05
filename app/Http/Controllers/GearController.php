@@ -66,18 +66,17 @@ class GearController extends Controller
         }
 
         for ($i = 0; $i < $request->amount; $i++) {
-            $gear = Gear::create($request->all());
-            $sameGear = Gear::where('code', $gear->code)->get()->first();
-
-            if(!!$sameGear and ($sameGear->name != $gear->name or
-                                $sameGear->description != $gear->description or
-                                $sameGear->unit_price != $gear->unit_price)) {
+            $sameGear = Gear::where('code', $request->code)->get()->first();
+            
+            if(!!$sameGear and ($sameGear->name != $request->name or
+                                $sameGear->description != $request->description or
+                                $sameGear->unit_price != $request->unit_price)) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Gear does not match with other ones with the same code',
                 ], 400);
             }
-            $gear->save();
+            $gear = Gear::create($request->all())->save();
         }
 
         return response()->json([
