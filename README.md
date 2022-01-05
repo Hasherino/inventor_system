@@ -375,20 +375,14 @@ Function: Returns the user's gear with the specified id
     * Code: 404 Not Found
     * Content: "Sorry, gear not found"
 
-<strong>URI: `GET` http://localhost:8000/api/gear/pdf </strong>
+<strong>URI: `GET` http://localhost:8000/api/gear/pdf/{id} </strong>
 
-Function: Generates a pdf of user's gear
-
-Parameters:
-
-|Parameter|Type|Description                |Required|
-|---------|----|---------------------------|--------|
-|`user_id`|int |User's id (only for admins)|false   |
+Function: Generates a pdf of gear with the selected id.
 
 * Success response:
     * Code: 200 OK
     * Content: The generated pdf
-* Error response:
+* Error response (if you're not an admin and selected gear that isn't yours):
     * Code: 401 Unauthorized
     * Content: "Not authorized"
 
@@ -526,7 +520,7 @@ Parameters:
     * Code: 400 Bad request
     * Content: Error specification
 
-<strong>URI: `POST` http://localhost:8000/api/requests/acceptLend/{id} </strong>
+<strong>URI: `POST` http://localhost:8000/api/requests/accept-lend/{id} </strong>
 
 Function: Accepts a lend request (id in URI is the id of the lend request)
 
@@ -551,7 +545,7 @@ Function: Returns lent gear (id in URI is the id of the gear that is being retur
     * Code: 400 Bad request
     * Content: Error message
 
-<strong>URI: `POST` http://localhost:8000/api/requests/acceptReturn/{id} </strong>
+<strong>URI: `POST` http://localhost:8000/api/requests/accept-return/{id} </strong>
 
 Function: Accepts return request (id in URI is the id of the request that is being accepted)
 
@@ -562,7 +556,7 @@ Function: Accepts return request (id in URI is the id of the request that is bei
     * Code: 404 Not found
     * Content: "Sorry, request/gear not found"
 
-<strong>URI: `POST` http://localhost:8000/api/requests/declineReturn/{id} </strong>
+<strong>URI: `POST` http://localhost:8000/api/requests/decline-return/{id} </strong>
 
 Function: Declines return request (id in URI is the id of the request that is being accepted)
 
@@ -587,7 +581,7 @@ Function: Gives away gear (id in URI is the id of the gear that is being gived a
     * Code: 400 Bad request
     * Content: Error message
 
-<strong>URI: `POST` http://localhost:8000/api/requests/acceptGiveaway/{id} </strong>
+<strong>URI: `POST` http://localhost:8000/api/requests/accept-giveaway/{id} </strong>
 
 Function: Accepts giveaway request (id in URI is the id of the request that is being accepted)
 
@@ -598,7 +592,7 @@ Function: Accepts giveaway request (id in URI is the id of the request that is b
     * Code: 404 Not found
     * Content: "Sorry, request/gear not found"
 
-<strong>URI: `POST` http://localhost:8000/api/requests/giveYourself/{id} </strong>
+<strong>URI: `POST` http://localhost:8000/api/requests/give-yourself/{id} </strong>
 
 Function: Give yourself any gear. Only for users with role: 1.
 
@@ -674,7 +668,7 @@ Event parameter explanation: </br>
     * Code: 200 OK
     * Content: User's history
 
-<strong>URI: `GET` http://localhost:8000/api/gearHistory/{id} </strong>
+<strong>URI: `GET` http://localhost:8000/api/gear-history/{id} </strong>
 
 Function: Returns gear's with specified id history
 

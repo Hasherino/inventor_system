@@ -20,9 +20,9 @@ class GearController extends Controller
     }
 
     public function userIndex(Request $request) {
-        $userGear = $this->user->gear()->where('name', 'like', "%$request->search%")->get();
-        $userGear = $this->addLentGear($userGear);
+        $userGear = $this->user->gear()->where('name', 'ilike', "%$request->search%")->get();
 
+        $userGear = $this->addLentGear($userGear);
         $userGear = $this->groupByCode($userGear);
 
         return $userGear;
@@ -214,7 +214,7 @@ class GearController extends Controller
         if ($gear['lent'] == 1) {
             return response()->json([
                 'success' => false,
-                'message' => 'You cannot destroy lent gear'
+                'message' => 'You cannot delete lent gear'
             ], 404);
         }
 
@@ -223,6 +223,10 @@ class GearController extends Controller
                 'success' => false,
                 'message' => 'Gear has a request'
             ], 400);
+        }
+
+        foreach($gear->history()->get() as $history) {
+            $history->delete();
         }
 
         $gear->delete();
@@ -235,6 +239,12 @@ class GearController extends Controller
 
     public function generatePDF($id) {
         $gear = Gear::find($id);
+        if (!$gear) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, gear not found.'
+            ], 404);
+        }
 
         if ($gear->user_id != $this->user->id and $this->user->role == 0) {
             return response()->json([
@@ -266,7 +276,7 @@ class GearController extends Controller
 
         $dom_pdf = $pdf->getDomPDF();
         $canvas = $dom_pdf ->get_canvas();
-        $canvas->page_text(50, 20, "Page {PAGE_NUM} of {PAGE_COUNT}", null, 10, array(0, 0, 0));
+        $canvas->page_text(270, 10, "Page {PAGE_NUM} of {PAGE_COUNT}", null, 10, array(0, 0, 0));
 
         return $pdf->download('pdf_file.pdf');
     }

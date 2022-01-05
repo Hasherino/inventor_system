@@ -56,13 +56,13 @@ Route::group(['prefix' => 'requests'], function () {
     Route::get('pending', [RequestController::class, 'pendingRequests']);
     Route::get('{id}', [RequestController::class, 'show']);
     Route::post('lend/{id}',  [RequestController::class, 'lend']);
-    Route::post('acceptLend/{id}', [RequestController::class, 'acceptLend']);
+    Route::post('accept-lend/{id}', [RequestController::class, 'acceptLend']);
     Route::post('return/{id}', [RequestController::class, 'returnLend']);
-    Route::post('acceptReturn/{id}', [RequestController::class, 'acceptReturnLend']);
+    Route::post('accept-return/{id}', [RequestController::class, 'acceptReturnLend']);
     Route::post('giveaway/{id}', [RequestController::class, 'giveaway']);
-    Route::post('acceptGiveaway/{id}', [RequestController::class, 'acceptGiveaway']);
-    Route::post('giveYourself/{id}', [RequestController::class, 'giveawayToYourself']);
-    Route::post('declineReturn/{id}', [RequestController::class, 'declineReturnLend']);
+    Route::post('accept-giveaway/{id}', [RequestController::class, 'acceptGiveaway']);
+    Route::post('give-yourself/{id}', [RequestController::class, 'giveawayToYourself']);
+    Route::post('decline-return/{id}', [RequestController::class, 'declineReturnLend']);
     Route::delete('{id}',  [RequestController::class, 'destroy']);
 });
 // User controller routes
@@ -79,4 +79,4 @@ Route::post('reset-password', [PasswordResetRequestController::class, 'sendPassw
 Route::post('change-password', [ChangePasswordController::class, 'passwordResetProcess']);
 // History routes
 Route::get('history', [HistoryController::class, 'index']);
-Route::get('gearHistory/{id}', [HistoryController::class, 'gearIndex']);
+Route::get('gear-history/{id}', [HistoryController::class, 'gearIndex']);

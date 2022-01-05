@@ -9,7 +9,6 @@
         * { box-sizing: border-box; }
         body{
             font-family: 'Roboto Condensed', sans-serif;
-            margin: 0;
         }
         h1 {
             text-align: center;
@@ -25,15 +24,10 @@
             margin: .7em 0 .5em;
         }
         header {
-            margin-top: 1in;
             border-bottom: solid 2px #C5C5C5;
         }
         #icon {
-            height: 40px;
-            margin-left: 1in;
-        }
-        .container {
-            margin: 0 1in; /* jeigu automatiskai neuzdeda parasciu */
+            height: 35px;
         }
         table {
             border-spacing: 0;
