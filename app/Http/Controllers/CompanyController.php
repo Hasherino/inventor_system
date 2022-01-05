@@ -17,12 +17,8 @@ class CompanyController extends Controller
     }
 
     public function index(Request $request) {
-        if ($this->user->role == 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Not authorized'
-            ], 401);
-        }
+        if(!!$error = $this->authorityCheck())
+            return $error;
 
         $companies = Company::where('name', 'ilike', "%$request->search%")->get();
         foreach ($companies as $company) {
@@ -33,12 +29,8 @@ class CompanyController extends Controller
     }
 
     public function store(Request $request) {
-        if ($this->user->role == 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Not authorized'
-            ], 401);
-        }
+        if(!!$error = $this->authorityCheck())
+            return $error;
 
         $data = $request->only('name');
         $validator = Validator::make($data, $this->rules());
@@ -71,12 +63,8 @@ class CompanyController extends Controller
     }
 
     public function update(Request $request, $id) {
-        if ($this->user->role == 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Not authorized'
-            ], 401);
-        }
+        if(!!$error = $this->authorityCheck())
+            return $error;
 
         $data = $request->only('name');
         $validator = Validator::make($data, $this->rules());
@@ -105,12 +93,8 @@ class CompanyController extends Controller
     }
 
     public function destroy($id) {
-        if ($this->user->role == 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Not authorized'
-            ], 401);
-        }
+        if(!!$error = $this->authorityCheck())
+            return $error;
 
         $company = Company::find($id);
 

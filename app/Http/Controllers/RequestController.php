@@ -278,12 +278,8 @@ class RequestController extends Controller
     }
 
     public function giveawayToYourself($id) {
-        if ($this->user->role == 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Not authorized'
-            ], 401);
-        }
+        if(!!$error = $this->authorityCheck())
+            return $error;
 
         $gear = Gear::where('id', $id)->get()->first();
         $error = $this->statusCheck($gear);

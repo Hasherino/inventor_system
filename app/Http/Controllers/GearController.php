@@ -29,45 +29,20 @@ class GearController extends Controller
     }
 
     public function index(Request $request) {
-        if ($this->user->role == 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Not authorized'
-            ], 401);
-        }
+        if(!!$error = $this->authorityCheck())
+            return $error;
+
         return $this->groupByCode(gear::where('name', 'ilike', "%$request->search%")->get());
     }
 
     public function selectedIndex(Request $request, $id) {
-        if ($this->user->role == 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Not authorized'
-            ], 401);
-        }
+        if(!!$error = $this->authorityCheck())
+            return $error;
 
         $selectedUser = User::find($id);
-        $userGear = $selectedUser->gear()->where('name', 'ilike', "%$request->search%")->get();
+        $userGear = $selectedUser->gear()->where('name', 'like', "%$request->search%")->get();
 
-        foreach ($userGear as $gear) {
-            $gear['own'] = 1;
-        }
-
-        $requests = $selectedUser->request()->get();
-        $validRequests = [];
-        foreach($requests as $request) {
-            if ($request->status == 1 or
-                ($request->status == 2 and $request->gear()->get()->first()->user_id != $id)) {
-                $validRequests[] = $request;
-            }
-        }
-
-        foreach ($validRequests as $request) {
-            $gear = $request->gear()->first();
-            $gear['own'] = 0;
-            $userGear = $userGear->push($gear);
-        }
-
+        $userGear = $this->addLentGear($userGear);
         $userGear = $this->groupByCode($userGear);
 
         return $userGear;
@@ -113,20 +88,12 @@ class GearController extends Controller
     }
 
     public function show($id) {
-        if ($this->user->role == 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Not authorized'
-            ], 401);
-        }
+        if(!!$error = $this->authorityCheck())
+            return $error;
 
         $gear = Gear::find($id);
-
-        if (!$gear) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Sorry, gear not found.'
-            ], 404);
+        if (!!$error = $this->gearCheck($gear)) {
+            return $error;
         }
 
         return $gear;
@@ -134,12 +101,8 @@ class GearController extends Controller
 
     public function showByCode($code) {
         $gear = Gear::where('code', $code)->get()->first();
-
-        if (!$gear) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Sorry, gear not found.'
-            ], 404);
+        if (!!$error = $this->gearCheck($gear)) {
+            return $error;
         }
 
         return $gear;
@@ -150,12 +113,8 @@ class GearController extends Controller
         $userGear = $this->addLentGear($userGear);
 
         $selectedGear = $userGear->find($id);
-
-        if (!$selectedGear) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Sorry, gear not found.'
-            ], 404);
+        if (!!$error = $this->gearCheck($selectedGear)) {
+            return $error;
         }
 
         return $selectedGear;
@@ -178,11 +137,8 @@ class GearController extends Controller
         }
 
         $gear = gear::find($id);
-        if (!$gear) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Sorry, gear not found.'
-            ], 404);
+        if (!!$error = $this->gearCheck($gear)) {
+            return $error;
         }
 
         $gear->fill($request->all());
@@ -196,19 +152,12 @@ class GearController extends Controller
     }
 
     public function destroy($id) {
-        if ($this->user->role == 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Not authorized'
-            ], 401);
-        }
+        if(!!$error = $this->authorityCheck())
+            return $error;
 
         $gear = gear::find($id);
-        if (!$gear) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Sorry, gear not found.'
-            ], 404);
+        if (!!$error = $this->gearCheck($gear)) {
+            return $error;
         }
 
         if ($gear['lent'] == 1) {
@@ -239,18 +188,14 @@ class GearController extends Controller
 
     public function generatePDF($id) {
         $gear = Gear::find($id);
-        if (!$gear) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Sorry, gear not found.'
-            ], 404);
+        if (!!$error = $this->gearCheck($gear)) {
+            return $error;
         }
-
-        if ($gear->user_id != $this->user->id and $this->user->role == 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Not authorized'
-            ], 401);
+        $request = $this->user->request()->where('gear_id', $id)->
+                   where('status', 1)->orWhere('status', 2)->get()->first();
+        if ($gear->user_id != $this->user->id and !$request) {
+            if(!!$error = $this->authorityCheck())
+                return $error;
         }
 
         $user = $gear->user()->get()->first();
