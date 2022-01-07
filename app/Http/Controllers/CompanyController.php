@@ -105,7 +105,7 @@ class CompanyController extends Controller
             ], 404);
         }
 
-        if(!$company->users()->isEmpty) {
+        if(!$company->users()->get()->isEmpty()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Company still has users.'
