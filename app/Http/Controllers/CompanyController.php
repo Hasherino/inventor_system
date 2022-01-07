@@ -105,6 +105,13 @@ class CompanyController extends Controller
             ], 404);
         }
 
+        if(!$company->users()->isEmpty) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Company still has users.'
+            ], 400);
+        }
+
         $company->delete();
 
         return response()->json([

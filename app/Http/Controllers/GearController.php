@@ -67,7 +67,7 @@ class GearController extends Controller
 
         for ($i = 0; $i < $request->amount; $i++) {
             $sameGear = Gear::where('code', $request->code)->get()->first();
-            
+
             if(!!$sameGear and ($sameGear->name != $request->name or
                                 $sameGear->description != $request->description or
                                 $sameGear->unit_price != $request->unit_price)) {

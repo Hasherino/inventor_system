@@ -291,8 +291,10 @@ Function: Deletes the company with the specified id. Only for users with role: 1
     * Code: 401 Unauthorized
     * Content: "Not authorized"
 * Error response (company not found):
-    * Code: 404 Not found
-    * Content: "Sorry, company not found"
+  * Code: 404 Not found
+  * Content: "Sorry, company not found"
+* Error response (company has users):
+    * Code: 400 Company still has users"
 
 ### Gear
 #### GET
