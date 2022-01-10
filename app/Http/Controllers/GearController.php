@@ -40,7 +40,7 @@ class GearController extends Controller
             return $error;
 
         $selectedUser = User::find($id);
-        $userGear = $selectedUser->gear()->where('name', 'like', "%$request->search%")->get();
+        $userGear = $selectedUser->gear()->where('name', 'ilike', "%$request->search%")->get();
 
         $userGear = $this->addLentGear($userGear);
         $userGear = $this->groupByCode($userGear);
@@ -242,7 +242,7 @@ class GearController extends Controller
             $gear['own'] = 1;
         }
 
-        $requests = $this->user->request()->get();
+        $requests = $userGear->first()->user()->first()->request()->get();
         $validRequests = [];
         foreach($requests as $request) {
             if ($request->status == 1 or

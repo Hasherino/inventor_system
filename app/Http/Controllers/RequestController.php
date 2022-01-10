@@ -144,12 +144,21 @@ class RequestController extends Controller
         $requests = \App\Models\Request::where('gear_id', $id)->get();
         $request = $requests->where('user_id', $this->user->id)->where('created_at', $requests->max('created_at'))->first();
 
-        if (!$request or $request->status != 1) {
+        if ($request->status == 2) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Return request is already sent'
+            ], 400);
+        }
+
+        if (!$request or $request->status =! 1) {
             return response()->json([
                 'success' => false,
                 'message' => 'Sorry, request not found.'
             ], 404);
         }
+
+
 
         $gear = $request->gear()->first();
         if (!$gear) {
