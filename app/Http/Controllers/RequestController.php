@@ -104,9 +104,7 @@ class RequestController extends Controller
                     'message' => 'Gear already has a request'
                 ], 400);
             }
-        }
 
-        foreach ($request->gear_id as $gearId) {
             \App\Models\Request::create([
                 'user_id' => $request->user_id,
                 'sender_id' => $this->user->id,
@@ -183,10 +181,7 @@ class RequestController extends Controller
                     'message' => 'Sorry, gear not found.'
                 ], 404);
             }
-        }
-        foreach ($request->gear_id as $gearId) {
-            $requests = \App\Models\Request::where('gear_id', $gearId)->get();
-            $userRequest = $requests->where('user_id', $this->user->id)->where('created_at', $requests->max('created_at'))->first();
+
             $userRequest->update(['status' => 2]);
         }
 
@@ -271,8 +266,7 @@ class RequestController extends Controller
             if (!!$error) {
                 return $error;
             }
-        }
-        foreach ($request->gear_id as $gearId) {
+
             \App\Models\Request::create([
                 'user_id' => $request->user_id,
                 'sender_id' => $this->user->id,
@@ -337,9 +331,8 @@ class RequestController extends Controller
                     'message' => 'You already own that gear'
                 ], 400);
             }
-        }
-        foreach ($request->gear_id as $gearId) {
-            Gear::where('id', $gearId)->get()->first()->update(['user_id' => $this->user->id]);
+
+            $gear->update(['user_id' => $this->user->id]);
         }
 
         return response()->json([
