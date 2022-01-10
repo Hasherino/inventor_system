@@ -496,15 +496,16 @@ Function: Returns the request with the specified id
 
 #### POST
 
-<strong>URI: `POST` http://localhost:8000/api/requests/lend/{id} </strong>
+<strong>URI: `POST` http://localhost:8000/api/requests/lend </strong>
 
-Function: Creates a request to lend gear (id in URI is the id of the gear to be lent)
+Function: Creates a request to lend gear
 
 Parameters:
 
-|Parameter|Type  |Description                                  |Required|
-|---------|------|---------------------------------------------|--------|
-|`user_id`|int   |Id of the user that the gear is being lent to|true    |
+|Parameter|Type     |Description                                  |Required|
+|---------|---------|---------------------------------------------|--------|
+|`user_id`|int      |Id of the user that the gear is being lent to|true    |
+|`gear_id`|int array|Array of gear, that is being lent, ids       |true    |
 
 * Success response:
     * Code: 200 OK
@@ -533,9 +534,15 @@ Function: Accepts a lend request (id in URI is the id of the lend request)
     * Code: 404 Not found
     * Content: "Sorry, request not found"
 
-<strong>URI: `POST` http://localhost:8000/api/requests/return/{id} </strong>
+<strong>URI: `POST` http://localhost:8000/api/requests/return </strong>
 
-Function: Returns lent gear (id in URI is the id of the gear that is being returned)
+Function: Returns lent gear
+
+Parameters:
+
+|Parameter|Type     |Description                               |Required|
+|---------|---------|------------------------------------------|--------|
+|`gear_id`|int array|Array of gear, that is being returned, ids|true    |
 
 * Success response:
     * Code: 200 OK
@@ -569,9 +576,16 @@ Function: Declines return request (id in URI is the id of the request that is be
     * Code: 404 Not found
     * Content: "Sorry, request/gear not found"
 
-<strong>URI: `POST` http://localhost:8000/api/requests/giveaway/{id} </strong>
+<strong>URI: `POST` http://localhost:8000/api/requests/giveaway </strong>
 
-Function: Gives away gear (id in URI is the id of the gear that is being gived away)
+Function: Gives away gear
+
+Parameters:
+
+|Parameter|Type     |Description                                        |Required|
+|---------|---------|---------------------------------------------------|--------|
+|`user_id`|int      |Id of the user that the gear is being given away to|true    |
+|`gear_id`|int array|Array of gear, that is being given away, ids       |true    |
 
 * Success response:
     * Code: 200 OK
@@ -594,9 +608,15 @@ Function: Accepts giveaway request (id in URI is the id of the request that is b
     * Code: 404 Not found
     * Content: "Sorry, request/gear not found"
 
-<strong>URI: `POST` http://localhost:8000/api/requests/give-yourself/{id} </strong>
+<strong>URI: `POST` http://localhost:8000/api/requests/give-yourself </strong>
 
 Function: Give yourself any gear. Only for users with role: 1.
+
+Parameters:
+
+|Parameter|Type     |Description                            |Required|
+|---------|---------|---------------------------------------|--------|
+|`gear_id`|int array|Array of gear, that is being taken, ids|true    |
 
 * Success response:
     * Code: 200 OK

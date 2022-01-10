@@ -55,13 +55,13 @@ Route::group(['prefix' => 'requests'], function () {
     Route::get('', [RequestController::class, 'index']);
     Route::get('pending', [RequestController::class, 'pendingRequests']);
     Route::get('{id}', [RequestController::class, 'show']);
-    Route::post('lend/{id}',  [RequestController::class, 'lend']);
+    Route::post('lend',  [RequestController::class, 'lend']);
     Route::post('accept-lend/{id}', [RequestController::class, 'acceptLend']);
-    Route::post('return/{id}', [RequestController::class, 'returnLend']);
+    Route::post('return', [RequestController::class, 'returnLend']);
     Route::post('accept-return/{id}', [RequestController::class, 'acceptReturnLend']);
-    Route::post('giveaway/{id}', [RequestController::class, 'giveaway']);
+    Route::post('giveaway', [RequestController::class, 'giveaway']);
     Route::post('accept-giveaway/{id}', [RequestController::class, 'acceptGiveaway']);
-    Route::post('give-yourself/{id}', [RequestController::class, 'giveawayToYourself']);
+    Route::post('give-yourself', [RequestController::class, 'giveawayToYourself']);
     Route::post('decline-return/{id}', [RequestController::class, 'declineReturnLend']);
     Route::delete('{id}',  [RequestController::class, 'destroy']);
 });
