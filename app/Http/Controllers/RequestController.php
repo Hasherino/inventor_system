@@ -79,7 +79,7 @@ class RequestController extends Controller
         $userGear = $this->user->gear()->get()->where('lent', 0);
         $userGear = app('App\Http\Controllers\GearController')->addLentGear($userGear);
 
-        foreach ($request->gear as $gearId) {
+        foreach ($request->gear_id as $gearId) {
             $gear = $userGear->find($gearId);
 
             if (!$gear) {
@@ -106,7 +106,7 @@ class RequestController extends Controller
             }
         }
 
-        foreach ($request->gear as $gearId) {
+        foreach ($request->gear_id as $gearId) {
             \App\Models\Request::create([
                 'user_id' => $request->user_id,
                 'sender_id' => $this->user->id,
@@ -158,7 +158,7 @@ class RequestController extends Controller
             return response()->json(['error' => $validator->messages()], 400);
         }
 
-        foreach ($request->id as $gearId) {
+        foreach ($request->gear_id as $gearId) {
             $requests = \App\Models\Request::where('gear_id', $gearId)->get();
             $userRequest = $requests->where('user_id', $this->user->id)->where('created_at', $requests->max('created_at'))->first();
 
@@ -184,7 +184,7 @@ class RequestController extends Controller
                 ], 404);
             }
         }
-        foreach ($request->id as $gearId) {
+        foreach ($request->gear_id as $gearId) {
             $requests = \App\Models\Request::where('gear_id', $gearId)->get();
             $userRequest = $requests->where('user_id', $this->user->id)->where('created_at', $requests->max('created_at'))->first();
             $userRequest->update(['status' => 2]);
