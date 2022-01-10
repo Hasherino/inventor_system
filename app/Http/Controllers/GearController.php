@@ -53,7 +53,7 @@ class GearController extends Controller
         $validator = Validator::make($data, [
             'name' => 'required|string',
             'code' => 'required|string',
-            'description' => 'string',
+            'description' => 'string|max:255',
             'serial_number' => 'string|unique:gear',
             'unit_price' => 'required|numeric',
             'long_term' => 'required|boolean',
