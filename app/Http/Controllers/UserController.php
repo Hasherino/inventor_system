@@ -45,7 +45,7 @@ class UserController extends Controller
     public function show($id) {
         $user = User::find($id);
 
-        if (!$user) {
+        if(!$user) {
             return response()->json([
                 'success' => false,
                 'message' => 'Sorry, user not found.'
@@ -74,11 +74,8 @@ class UserController extends Controller
             'role' => 'required|integer'
         ]);
 
-        if($validator->fails()){
-          return response()->json([
-              'success' => false,
-              'message' => 'The email has already been taken'
-          ], 400);
+        if($validator->fails()) {
+            return response()->json(['error' => $validator->messages()], 400);
         }
 
         User::create(array_merge(
@@ -105,12 +102,12 @@ class UserController extends Controller
             return response()->json(['error' => $validator->messages()], 400);
         }
 
-        if (!!$request->role and !!$error = $this->authorityCheck())
+        if(!!$request->role and !!$error = $this->authorityCheck())
             return $error;
 
         $user = User::find($id);
 
-        if (!$user) {
+        if(!$user) {
             return response()->json([
                 'success' => false,
                 'message' => 'Sorry, user not found.'
@@ -133,14 +130,14 @@ class UserController extends Controller
 
         $user = User::find($id);
 
-        if (!$user) {
+        if(!$user) {
             return response()->json([
                 'success' => false,
                 'message' => 'Sorry, user not found.'
             ], 404);
         }
 
-        if ($user->gear()->count() != 0 or $user->request()->where('status', 2)->count() != 0) {
+        if($this->addLentGear($user->gear()->get())->count() != 0) {
             return response()->json([
                 'success' => false,
                 'message' => 'User cannot be deleted, because user has gear'

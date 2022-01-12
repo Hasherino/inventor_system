@@ -16,26 +16,25 @@
   * [PUT](#put)
   * [DELETE](#delete)
 - [Authorization](#authorization)
-  * [GET](#get-1)
   * [POST](#post-1)
 - [Company](#company)
-  * [GET](#get-2)
+  * [GET](#get-1)
   * [POST](#post-2)
   * [PUT](#put-1)
   * [DELETE](#delete-1)
 - [Gear](#gear)
-  * [GET](#get-3)
+  * [GET](#get-2)
   * [POST](#post-3)
   * [PUT](#put-2)
   * [DELETE](#delete-2)
 - [Requests](#requests)
-  * [GET](#get-4)
+  * [GET](#get-3)
   * [POST](#post-4)
   * [DELETE](#delete-3)
 - [Password reset](#password-reset)
   * [POST](#post-5)
 - [History](#history)
-  * [GET](#get-5)
+  * [GET](#get-4)
 
 ### User
 #### GET
@@ -54,12 +53,9 @@ Parameters:
 * Success response:
   * Code: 200 OK
   * Content: a list of all users
-* Error response (unauthorized):
+* Error response:
     * Code: 401 Unauthorized
     * Content: Unauthorized
-* Error response (not found):
-  * Code: 404 Not found
-  * Content: empty
 
 <strong>URI: `GET` http://localhost:8000/api/users </strong>
 
@@ -74,9 +70,6 @@ Parameters:
 * Success response:
     * Code: 200 OK
     * Content: a list of all users
-* Error response:
-    * Code: 404 Not found
-    * Content: empty
 
 <strong>URI: `GET` http://localhost:8000/api/users/{id} </strong>
 
@@ -97,13 +90,13 @@ Function: Adds a user to the database and emails him to set a password. Only for
 
 Parameters:
 
-|Parameter              |Type  |Description                       |Required|
-|-----------------------|------|----------------------------------|--------|
-|`first_name`           |string|The first name of the user        |true    |
-|`last_name`            |string|The last name of the user         |true    |
-|`email`                |string|Email of the user                 |true    |
-|`company_id`           |int   |User's company id                 |true    |
-|`role`                 |int   |User's role (0: regular, 1: admin)|true    |
+|Parameter              |Type  |Description                        |Required|
+|-----------------------|------|-----------------------------------|--------|
+|`first_name`           |string|The first name of the user         |true    |
+|`last_name`            |string|The last name of the user          |true    |
+|`email`                |string|Email of the user. Has to be unique|true    |
+|`company_id`           |int   |User's company id                  |true    |
+|`role`                 |int   |User's role (0: regular, 1: admin) |true    |
 
 * Success response:
     * Code: 201 Created
@@ -123,12 +116,12 @@ Function: Updates the user with the specified id.
 
 Parameters:
 
-|Parameter              |Type  |Description                       |Required|
-|-----------------------|------|----------------------------------|--------|
-|`first_name`           |string|The first name of the user        |false   |
-|`last_name`            |string|The last name of the user         |false   |
-|`email`                |string|Email of the user                 |false   |
-|`role`                 |int   |User's role (0: regular, 1: admin)|false   |
+|Parameter              |Type  |Description                        |Required|
+|-----------------------|------|-----------------------------------|--------|
+|`first_name`           |string|The first name of the user         |false   |
+|`last_name`            |string|The last name of the user          |false   |
+|`email`                |string|Email of the user. Has to be unique|false   |
+|`role`                 |int   |User's role (0: regular, 1: admin) |false   |
 
 * Success response:
     * Code: 200 OK
@@ -144,11 +137,14 @@ Parameters:
 
 <strong>URI: `DELETE` http://localhost:8000/api/users/{id} </strong>
 
-Function: Deletes the user with the specified id.
+Function: Deletes the user with the specified id. Only for users with role: 1.
 
 * Success response:
     * Code: 200 OK
     * Content: "User deleted successfully"
+* Error response (unauthorized):
+    * Code: 401 Unauthorized
+    * Content: "Not authorized"
 * Error response (user not found):
     * Code: 404 Not found
     * Content: "Sorry, user not found"
@@ -157,16 +153,6 @@ Function: Deletes the user with the specified id.
     * Content: "User cannot be deleted, because user has gear"
 
 ### Authorization
-#### GET
-
-<strong>URI: `GET` http://localhost:8000/api/auth/user-profile </strong>
-
-Function: Returns the logged in user's data.
-
-* Success response:
-    * Code: 200 OK
-    * Content: logged in user's data
-
 #### POST
 
 <strong>URI: `POST` http://localhost:8000/api/auth/login </strong>
@@ -185,7 +171,7 @@ Parameters:
     * Content: Access token and user's data
 * Error response:
     * Code: 401 Unauthorized
-    * Content: Unauthorized
+    * Content: "Not authorized"
 
 <strong>URI: `POST` http://localhost:8000/api/auth/logout </strong>
 
@@ -223,17 +209,6 @@ Parameters:
     * Code: 401 Unauthorized
     * Content: "Not authorized"
 
-<strong>URI: `GET` http://localhost:8000/api/companies/{id} </strong>
-
-Function: Returns the company with the specified id
-
-* Success response:
-    * Code: 200 OK
-    * Content: The company with the specified id
-* Error response:
-    * Code: 404 Not Found
-    * Content: "Sorry, company not found"
-
 #### POST
 
 <strong>URI: `POST` http://localhost:8000/api/companies </strong>
@@ -249,9 +224,12 @@ Parameters:
 * Success response:
     * Code: 201 Created
     * Content: The created company
-* Error response:
+* Error response (unauthorized):
     * Code: 401 Unauthorized
     * Content: "Not authorized"
+* Error response (bad parameters):
+    * Code: 400 Bad request
+    * Content: Error specification
 
 #### PUT
 
@@ -482,17 +460,6 @@ Function: Returns all user's pending requests
 * Success response:
     * Code: 200 OK
     * Content: A list of all user's pending requests
-
-<strong>URI: `GET` http://localhost:8000/api/requests/{id} </strong>
-
-Function: Returns the request with the specified id
-
-* Success response:
-    * Code: 200 OK
-    * Content: The request with the specified id
-* Error response:
-    * Code: 404 Not found
-    * Content: "Sorry, request not found"
 
 #### POST
 

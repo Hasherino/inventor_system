@@ -42,21 +42,6 @@ class RequestController extends Controller
         return $requests->sortByDesc('created_at')->values();
     }
 
-    public function show($id) {
-        $request = \App\Models\Request::find($id);
-
-        if (!$request) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Sorry, request not found.'
-            ], 404);
-        }
-
-        $request['gear'] = $request->gear()->get();
-
-        return $request;
-    }
-
     public function lend(Request $request) {
         $data = $request->only('user_id', 'gear_id');
         $validator = Validator::make($data, [
@@ -77,7 +62,7 @@ class RequestController extends Controller
         }
 
         $userGear = $this->user->gear()->get()->where('lent', 0);
-        $userGear = app('App\Http\Controllers\GearController')->addLentGear($userGear);
+        $userGear = $this->addLentGear($userGear);
 
         $errors = [];
         foreach ($request->gear_id as $gearId) {

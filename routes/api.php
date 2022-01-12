@@ -24,10 +24,9 @@ use App\Http\Controllers\AuthController;
 
 // Authentication routes
 Route::group(['prefix' => 'auth'], function () {
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::post('/refresh', [AuthController::class, 'refresh']);
-    Route::get('/user-profile', [AuthController::class, 'userProfile']);
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('refresh', [AuthController::class, 'refresh']);
 });
 // Gear controller routes
 Route::group(['prefix' => 'gear'], function () {
@@ -45,7 +44,6 @@ Route::group(['prefix' => 'gear'], function () {
 // Company controller routes
 Route::group(['prefix' => 'companies'], function () {
     Route::get('', [CompanyController::class, 'index']);
-    Route::get('{id}', [CompanyController::class, 'show']);
     Route::post('', [CompanyController::class, 'store']);
     Route::put('{id}',  [CompanyController::class, 'update']);
     Route::delete('{id}',  [CompanyController::class, 'destroy']);
@@ -54,7 +52,6 @@ Route::group(['prefix' => 'companies'], function () {
 Route::group(['prefix' => 'requests'], function () {
     Route::get('', [RequestController::class, 'index']);
     Route::get('pending', [RequestController::class, 'pendingRequests']);
-    Route::get('{id}', [RequestController::class, 'show']);
     Route::post('lend',  [RequestController::class, 'lend']);
     Route::post('accept-lend/{id}', [RequestController::class, 'acceptLend']);
     Route::post('return', [RequestController::class, 'returnLend']);

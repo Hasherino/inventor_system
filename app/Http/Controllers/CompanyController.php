@@ -49,19 +49,6 @@ class CompanyController extends Controller
         ], 201);
     }
 
-    public function show($id) {
-        $company = Company::find($id);
-
-        if (!$company) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Sorry, company not found.'
-            ], 404);
-        }
-
-        return $company;
-    }
-
     public function update(Request $request, $id) {
         if(!!$error = $this->authorityCheck())
             return $error;

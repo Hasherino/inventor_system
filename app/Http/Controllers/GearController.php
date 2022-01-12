@@ -213,9 +213,6 @@ class GearController extends Controller
         $data['gear'] = $gear;
         $data['history'] = $history;
 
-
-
-
         $pdf = PDF::loadView('pdf', $data);
 
         $dom_pdf = $pdf->getDomPDF();
@@ -238,6 +235,10 @@ class GearController extends Controller
     }
 
     public function addLentGear($userGear) {
+        if($userGear->isEmpty()) {
+            return $userGear;
+        }
+
         foreach ($userGear as $gear) {
             $gear['own'] = 1;
             if($gear['lent'] == 0) {
