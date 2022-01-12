@@ -82,9 +82,10 @@ class RequestController extends Controller
         $errors = [];
         foreach ($request->gear_id as $gearId) {
             $gear = $userGear->find($gearId);
-
             if (!$gear) {
                 $errors[] = 'Sorry, gear not found. (id: ' . $gearId .')';
+            } elseif ($gear['current_holder'] != 1) {
+                $errors[] = 'You do not currently hold this gear. (id: ' . $gearId .')';
             } elseif ($request->user_id == $gear->user_id) {
                 $errors[] = 'This user owns this gear. (id: ' . $gearId . ')';
             } else {
