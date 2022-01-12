@@ -18,15 +18,6 @@ class RequestController extends Controller
         $this->user = JWTAuth::parseToken()->authenticate();
     }
 
-    public function index() {
-        $requests = $this->user->request()->get();
-        foreach($requests as $request) {
-            $request['gear'] = $request->gear()->get();
-            $request['lender_id'] = $request['gear']->first()->user_id;
-        }
-        return $requests;
-    }
-
     public function pendingRequests() {
         $requests = \App\Models\Request::where('status', 0)->orWhere('status', 3)->get()->where('user_id', $this->user->id);
 
@@ -229,13 +220,20 @@ class RequestController extends Controller
     public function giveaway(Request $request) {
         $data = $request->only('user_id', 'gear_id');
         $validator = Validator::make($data, [
-            'user_id' => 'integer|required',
+            'user_id' => 'integer|required|exists:users,id',
             'gear_id' => 'array|required',
             'gear_id.*' => 'integer'
         ]);
 
         if ($validator->fails()) {
             return response()->json(['error' => $validator->messages()], 400);
+        }
+
+        if ($request->user_id == $this->user->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You cannot giveaway gear to yourself.'
+            ], 400);
         }
 
         $errors = [];
@@ -349,10 +347,10 @@ class RequestController extends Controller
             ], 404);
         }
 
-        if ($request->status == 1) {
+        if ($request->status == 1 or $request->status == 2) {
             return response()->json([
                 'success' => false,
-                'message' => 'Cannot delete this request'
+                'message' => 'Cannot delete this request.'
             ], 400);
         }
 
@@ -360,7 +358,7 @@ class RequestController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Request deleted successfully'
+            'message' => 'Request deleted successfully.'
         ]);
     }
 

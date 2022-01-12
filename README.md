@@ -315,9 +315,12 @@ Function: Returns all user's with the specified id gear. Only for users with rol
 * Success response:
     * Code: 200 OK
     * Content: A list of all user's gear
-* Error response:
+* Error response (unauthorized):
     * Code: 401 Unauthorized
     * Content: "Not authorized"
+* Error response (user not found):
+    * Code: 404 Not Found
+    * Content: "Sorry, user not found"
 
 <strong>URI: `GET` http://localhost:8000/api/gear/all/{id} </strong>
 
@@ -335,7 +338,7 @@ Function: Returns the gear with the specified id. Only for users with role: 1.
 
 <strong>URI: `GET` http://localhost:8000/api/gear/code/{code} </strong>
 
-Function: Returns the user's gear with the specified code
+Function: Returns gear with the specified code
 
 * Success response:
     * Code: 200 OK
@@ -374,16 +377,16 @@ Function: Creates a new gear.
 
 Parameters:
 
-|Parameter      |Type  |Description           |Required|
-|---------------|------|----------------------|--------|
-|`name`         |string|Gear's name           |true    |
-|`code`         |string|Gear's code           |true    |
-|`description`  |string|Gear's description    |true    |
-|`serial_number`|string|Gear's serial number  |true    |
-|`unit_price`   |double|Unit price of the gear|true    |
-|`long_term`    |bool  |Is the gear long-term |true    |
-|`user_id`      |int   |Gear's owner's id     |true    |
-|`amount`       |int   |Quantity of the gear  |false   |
+|Parameter      |Type  |Description                        |Required|
+|---------------|------|-----------------------------------|--------|
+|`name`         |string|Gear's name                        |true    |
+|`code`         |string|Gear's code                        |true    |
+|`description`  |string|Gear's description. Max length: 255|true    |
+|`serial_number`|string|Gear's serial number. Unique       |true    |
+|`unit_price`   |double|Unit price of the gear             |true    |
+|`long_term`    |bool  |Is the gear long-term              |true    |
+|`user_id`      |int   |Gear's owner's id                  |true    |
+|`amount`       |int   |Quantity of the gear. Max: 50      |true    |
 
 * Success response:
     * Code: 201 Created
@@ -396,27 +399,23 @@ Parameters:
 
 <strong>URI: `PUT` http://localhost:8000/api/gear/{id} </strong>
 
-Function: Updates all the gear's data with the specified id.  Only for users with roles: 1.
+Function: Updates all the gear's data with the specified id.
 
 Parameters:
 
-|Parameter      |Type  |Description           |Required|
-|---------------|------|----------------------|--------|
-|`name`         |string|Gear's name           |false   |
-|`code`         |string|Gear's code           |false    |
-|`description`  |string|Gear's description    |false    |
-|`serial_number`|string|Gear's serial number  |false   |
-|`unit_price`   |double|Unit price of the gear|false   |
-|`long_term`    |bool  |Is the gear long-term |false   |
-|`lent`         |bool  |Is the gear lent      |false   |
-|`user_id`      |int   |Gear's owner's id     |false   |
+|Parameter      |Type  |Description                        |Required|
+|---------------|------|-----------------------------------|--------|
+|`name`         |string|Gear's name                        |false   |
+|`code`         |string|Gear's code                        |false   |
+|`description`  |string|Gear's description. Max length: 255|false   |
+|`serial_number`|string|Gear's serial number. Unique       |false   |
+|`unit_price`   |double|Unit price of the gear             |false   |
+|`long_term`    |bool  |Is the gear long-term              |false   |
+|`user_id`      |int   |Gear's owner's id                  |false   |
 
 * Success response:
     * Code: 200 OK
     * Content: The updated gear
-* Error response (unauthorized):
-    * Code: 401 Unauthorized
-    * Content: "Not authorized"
 * Error response (gear not found):
     * Code: 404 Not found
     * Content: "Sorry, gear not found"
@@ -439,19 +438,17 @@ Function: Deletes the gear with the specified id. Only for users with role: 1.
 * Error response (gear not found):
     * Code: 404 Not found
     * Content: "Sorry, gear not found"
+* Error response (gear is lent):
+    * Code: 400 Bad request
+    * Content: "You cannot delete lent gear"
+* Error response (gear has a request):
+    * Code: 400 Bad request
+    * Content: "Gear has a request"
 
 ### Requests
 #### GET
 
 Status reference: `0 = pending lend` `1 = lent` `2 = pending return` `3 = pending giveaway`
-
-<strong>URI: `GET` http://localhost:8000/api/requests </strong>
-
-Function: Returns all user's requests
-
-* Success response:
-    * Code: 200 OK
-    * Content: A list of all user's requests
 
 <strong>URI: `GET` http://localhost:8000/api/requests/pending </strong>
 
@@ -469,10 +466,10 @@ Function: Creates a request to lend gear
 
 Parameters:
 
-|Parameter|Type     |Description                                  |Required|
-|---------|---------|---------------------------------------------|--------|
-|`user_id`|int      |Id of the user that the gear is being lent to|true    |
-|`gear_id`|int array|Array of gear, that is being lent, ids       |true    |
+|Parameter|Type     |Description                                                |Required|
+|---------|---------|-----------------------------------------------------------|--------|
+|`user_id`|int      |Id of the user that the gear is being lent to. Has to exist|true    |
+|`gear_id`|int array|Array of gear, that is being lent, ids                     |true    |
 
 * Success response:
     * Code: 200 OK
@@ -480,9 +477,15 @@ Parameters:
 * Error response (gear not found):
     * Code: 404 Not found
     * Content: "Sorry, gear not found"
-* Error response (user not found):
-    * Code: 404 Not found
-    * Content: "Sorry, user not found"
+* Error response (lending to yourself):
+    * Code: 400 Bad request
+    * Content: "You cannot lend gear to yourself."
+* Error response (user owns the gear):
+    * Code: 400 Bad request
+    * Content: "This user owns this gear."
+* Error response (not holding the gear):
+    * Code: 400 Bad request
+    * Content: "You do not currently hold this gear."
 * Error response (gear already has a request):
     * Code: 400 Bad request
     * Content: "Gear already has a request"
@@ -517,7 +520,13 @@ Parameters:
 * Error response (not found):
     * Code: 404 Not found
     * Content: "Sorry, request/gear not found"
-* Error response:
+* Error response (request already sent):
+    * Code: 400 Bad request
+    * Content: "Return request is already sent."
+* Error response (gear is not in lent stage):
+    * Code: 400 Bad request
+    * Content: "Gear is not in lent stage."
+* Error response (bad parameters):
     * Code: 400 Bad request
     * Content: Error message
 
@@ -549,10 +558,10 @@ Function: Gives away gear
 
 Parameters:
 
-|Parameter|Type     |Description                                        |Required|
-|---------|---------|---------------------------------------------------|--------|
-|`user_id`|int      |Id of the user that the gear is being given away to|true    |
-|`gear_id`|int array|Array of gear, that is being given away, ids       |true    |
+|Parameter|Type     |Description                                                      |Required|
+|---------|---------|-----------------------------------------------------------------|--------|
+|`user_id`|int      |Id of the user that the gear is being given away to. Has to exist|true    |
+|`gear_id`|int array|Array of gear, that is being given away, ids                     |true    |
 
 * Success response:
     * Code: 200 OK
@@ -560,7 +569,16 @@ Parameters:
 * Error response (not found):
     * Code: 404 Not found
     * Content: "Sorry, gear not found"
-* Error response:
+* Error response (gear is lent):
+    * Code: 400 Bad request
+    * Content: "You cannot give away lent gear."
+* Error response (gear already has a request):
+    * Code: 400 Bad request
+    * Content: "Gear already has a request"
+* Error response (trying to giveaway to yourself):
+    * Code: 400 Bad request
+    * Content: "You cannot giveaway gear to yourself."
+* Error response (bad parameters):
     * Code: 400 Bad request
     * Content: Error message
 
@@ -591,7 +609,16 @@ Parameters:
 * Error response (not found):
     * Code: 404 Not found
     * Content: "Sorry, gear not found"
-* Error response:
+* Error response (gear is lent):
+    * Code: 400 Bad request
+    * Content: "You cannot give away lent gear."
+* Error response (gear already has a request):
+    * Code: 400 Bad request
+    * Content: "Gear already has a request"
+* Error response (already have the gear):
+    * Code: 400 Bad request
+    * Content: "You already own that gear."
+* Error response (bad parameters):
     * Code: 400 Bad request
     * Content: Error message
 
@@ -604,7 +631,10 @@ Function: Deletes the request with the specified id (if the request belongs to t
 * Success response:
     * Code: 200 OK
     * Content: "Request deleted successfully."
-* Error response:
+* Error response (status = 1 or 2):
+    * Code: 400 Bad request
+    * Content: "Cannot delete this request."
+* Error response (not found):
     * Code: 404 Not found
     * Content: "Sorry, request not found."
 
@@ -646,12 +676,12 @@ Function: Changes user's password to a new one
 ### History
 #### GET
 
+Event parameter explanation: </br>
+`0 = lent` `1 = returned` `2 = gave away` `3 = deleted`
+
 <strong>URI: `GET` http://localhost:8000/api/history </strong>
 
 Function: Returns user's history
-
-Event parameter explanation: </br>
-`0 = lent` `1 = returned` `2 = gave away` `3 = deleted`
 
 * Success response:
     * Code: 200 OK
@@ -660,9 +690,6 @@ Event parameter explanation: </br>
 <strong>URI: `GET` http://localhost:8000/api/gear-history/{id} </strong>
 
 Function: Returns gear's with specified id history
-
-Event parameter explanation: </br>
-`0 = lent` `1 = returned` `2 = deleted`
 
 * Success response:
     * Code: 200 OK

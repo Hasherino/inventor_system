@@ -50,7 +50,6 @@ Route::group(['prefix' => 'companies'], function () {
 });
 // Giveaway request controller routes
 Route::group(['prefix' => 'requests'], function () {
-    Route::get('', [RequestController::class, 'index']);
     Route::get('pending', [RequestController::class, 'pendingRequests']);
     Route::post('lend',  [RequestController::class, 'lend']);
     Route::post('accept-lend/{id}', [RequestController::class, 'acceptLend']);

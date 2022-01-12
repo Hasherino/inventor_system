@@ -20,7 +20,7 @@ class GearController extends Controller
     }
 
     public function userIndex(Request $request) {
-        $userGear = $this->user->gear()->where('name', 'like', "%$request->search%")->get();
+        $userGear = $this->user->gear()->where('name', 'ilike', "%$request->search%")->get();
 
         $userGear = $this->addLentGear($userGear);
         $userGear = $this->groupByCode($userGear);
@@ -40,6 +40,13 @@ class GearController extends Controller
             return $error;
 
         $selectedUser = User::find($id);
+        if(!$selectedUser) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, user not found.'
+            ], 404);
+        }
+
         $userGear = $selectedUser->gear()->where('name', 'ilike', "%$request->search%")->get();
 
         $userGear = $this->addLentGear($userGear);
@@ -120,14 +127,14 @@ class GearController extends Controller
     }
 
     public function update(Request $request, $id) {
-        $data = $request->only('name', 'description', 'serial_number', 'unit_price', 'long_term', 'lend_stage', 'user_id');
+        $data = $request->only('name', 'code', 'description', 'serial_number', 'unit_price', 'long_term', 'user_id');
         $validator = Validator::make($data, [
             'name' => 'string',
+            'code' => 'string',
             'description' => 'string',
             'serial_number' => 'string',
             'unit_price' => 'numeric',
             'long_term' => 'boolean',
-            'lend_stage' => 'integer',
             'user_id' => 'integer'
         ]);
 
@@ -163,7 +170,7 @@ class GearController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'You cannot delete lent gear'
-            ], 404);
+            ], 400);
         }
 
         if (!\App\Models\Request::where('gear_id', $gear->id)->get()->isEmpty()) {
