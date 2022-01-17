@@ -20,7 +20,7 @@ class Controller extends BaseController
         }
     }
 
-    public function addLentGear($userGear) {
+    public function addLentGear($userGear, $user) {
         foreach ($userGear as $gear) {
             $gear['own'] = 1;
             if($gear['lent'] == 0) {
@@ -30,7 +30,7 @@ class Controller extends BaseController
             }
         }
 
-        $requests = $userGear->first()->user()->first()->request()->get();
+        $requests = $user->request()->get();
         $validRequests = [];
         foreach($requests as $request) {
             if ($request->status == 1) {
@@ -40,7 +40,7 @@ class Controller extends BaseController
                     $request['current_holder'] = 0;
                 }
                 $validRequests[] = $request;
-            } elseif($request->status == 2 and $request->gear()->get()->first()->user_id != $this->user->id) {
+            } elseif($request->status == 2 and $request->gear()->get()->first()->user_id != $user->id) {
                 $request['current_holder'] = 1;
                 $validRequests[] = $request;
             }

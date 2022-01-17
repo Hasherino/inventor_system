@@ -128,7 +128,7 @@ class UserController extends Controller
             ], 404);
         }
 
-        if($this->addLentGear($user->gear()->get())->count() != 0) {
+        if($this->addLentGear($user->gear()->get(), $user)->count() != 0) {
             return response()->json([
                 'success' => false,
                 'message' => 'User cannot be deleted, because user has gear'

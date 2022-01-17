@@ -33,7 +33,6 @@ Route::group(['prefix' => 'auth'], function () {
 Route::group(['prefix' => 'gear'], function () {
     Route::group(['middleware' => 'admin'], function () {
         Route::get('all', [GearController::class, 'index']);
-        Route::delete('{id}', [GearController::class, 'destroy']);
         Route::get('user/{id}', [GearController::class, 'selectedIndex']);
         Route::get('all/{id}', [GearController::class, 'show']);
     });
@@ -43,6 +42,7 @@ Route::group(['prefix' => 'gear'], function () {
     Route::get('{id}', [GearController::class, 'userShow']);
     Route::post('', [GearController::class, 'store']);
     Route::put('{id}',  [GearController::class, 'update']);
+    Route::delete('{id}', [GearController::class, 'destroy']);
 });
 // Company controller routes
 Route::group(['prefix' => 'companies', 'middleware' => 'admin'], function () {
@@ -76,8 +76,8 @@ Route::group(['prefix' => 'users'], function () {
     Route::put('{id}',  [UserController::class, 'update']);
 });
 // Password reset routes
-Route::post('reset-password', [PasswordResetRequestController::class, 'sendPasswordResetEmail']);
-Route::post('new-password', [ResetPasswordController::class, 'passwordResetProcess']);
+Route::post('reset-password-email', [PasswordResetRequestController::class, 'sendPasswordResetEmail']);
+Route::post('reset-password', [ResetPasswordController::class, 'passwordResetProcess']);
 Route::post('change-password', [ChangePasswordController::class, 'changePassword']);
 // History routes
 Route::get('history', [HistoryController::class, 'index']);

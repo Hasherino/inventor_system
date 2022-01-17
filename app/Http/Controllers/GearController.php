@@ -22,7 +22,7 @@ class GearController extends Controller
     public function userIndex(Request $request) {
         $userGear = $this->user->gear()->where('name', 'ilike', "%$request->search%")->get();
 
-        $userGear = $this->addLentGear($userGear);
+        $userGear = $this->addLentGear($userGear, $this->user);
         $userGear = $this->groupByCode($userGear);
 
         return $userGear;
@@ -43,7 +43,7 @@ class GearController extends Controller
 
         $userGear = $selectedUser->gear()->where('name', 'ilike', "%$request->search%")->get();
 
-        $userGear = $this->addLentGear($userGear);
+        $userGear = $this->addLentGear($userGear, $selectedUser);
         $userGear = $this->groupByCode($userGear);
 
         return $userGear;
@@ -107,7 +107,7 @@ class GearController extends Controller
 
     public function userShow($id) {
         $userGear = $this->user->gear()->get();
-        $userGear = $this->addLentGear($userGear);
+        $userGear = $this->addLentGear($userGear, $this->user);
 
         $selectedGear = $userGear->find($id);
         if (!!$error = $this->gearCheck($selectedGear)) {
@@ -149,7 +149,12 @@ class GearController extends Controller
     }
 
     public function destroy($id) {
-        $gear = gear::find($id);
+        if ($this->user->role == 1) {
+            $gear = gear::find($id);
+        } else {
+            $gear = $this->user->gear->find($id);
+        }
+
         if (!!$error = $this->gearCheck($gear)) {
             return $error;
         }

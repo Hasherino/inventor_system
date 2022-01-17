@@ -664,6 +664,7 @@ Function: Changes user's password to a new one
 |------------------|------|--------------------------|--------|
 |`password`        |string|The new password. Min: 6  |true    |
 |`confirm_password`|string|The same password repeated|true    |
+|`old_password`    |string|The old user's password   |true    |
 
 * Success response:
     * Code: 200 OK
@@ -671,6 +672,9 @@ Function: Changes user's password to a new one
 * Error response (passwords do not match):
     * Code: 400 Bad request
     * Content: "Passwords do not match"
+* Error response (old password is incorrect):
+    * Code: 400 Bad request
+    * Content: "Password is incorrect"
 * Error response (bad parameters):
     * Code: 400 Bad request
     * Content: Error message

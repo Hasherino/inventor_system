@@ -53,7 +53,7 @@ class RequestController extends Controller
         }
 
         $userGear = $this->user->gear()->get()->where('lent', 0);
-        $userGear = $this->addLentGear($userGear);
+        $userGear = $this->addLentGear($userGear, $this->user);
 
         $errors = [];
         foreach ($request->gear_id as $gearId) {
