@@ -425,7 +425,7 @@ Parameters:
 
 #### DELETE
 
-<strong>URI: `GET` http://localhost:8000/api/gear/delete </strong>
+<strong>URI: `DELETE` http://localhost:8000/api/gear/delete </strong>
 
 Function: Deletes the gear with the specified id's. Only for users with role: 1.
 
