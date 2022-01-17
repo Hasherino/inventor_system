@@ -3,7 +3,7 @@
 
 Click the button to set your password.
 
-@component('mail::button', ['url' => 'http://localhost:8000/change-password?token='.$token.'&email='.$email])
+@component('mail::button', ['url' => 'https://inventor-system.herokuapp.com/api/new-password?token='.$token.'&email='.$email])
 Set password
 @endcomponent
 

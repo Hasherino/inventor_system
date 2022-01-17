@@ -289,9 +289,6 @@ class RequestController extends Controller
     }
 
     public function giveawayToYourself(Request $request) {
-        if(!!$error = $this->authorityCheck())
-            return $error;
-
         $data = $request->only('gear_id');
         $validator = Validator::make($data, [
             'gear_id' => 'array|required',

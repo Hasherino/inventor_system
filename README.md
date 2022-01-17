@@ -660,18 +660,20 @@ Function: Sends a password reset link to the specified email
 
 Function: Changes user's password to a new one
 
-|Parameter |Type  |Description                                              |Required|
-|----------|------|---------------------------------------------------------|--------|
-|`email`   |string|The email of the user, who wants his password reset      |true    |
-|`token`   |string|Token, which is given with the link to reset/set password|true    |
-|`password`|string|The new password                                         |true    |
+|Parameter         |Type  |Description               |Required|
+|------------------|------|--------------------------|--------|
+|`password`        |string|The new password. Min: 6  |true    |
+|`confirm_password`|string|The same password repeated|true    |
 
 * Success response:
-    * Code: 201 Created
-    * Content: "Password has been updated."
-* Error response:
-    * Code: 422 Unprocessable Content
-    * Content: "Either your email or token is wrong."
+    * Code: 200 OK
+    * Content: "Password changed successfully"
+* Error response (passwords do not match):
+    * Code: 400 Bad request
+    * Content: "Passwords do not match"
+* Error response (bad parameters):
+    * Code: 400 Bad request
+    * Content: Error message
 
 ### History
 #### GET

@@ -20,9 +20,6 @@ class UserController extends Controller
     }
 
     public function index(Request $request) {
-        if(!!$error = $this->authorityCheck())
-            return $error;
-
         $search = str_replace(' ', '', $request->search);
         if(!$request->company) {
             $users = User::whereRaw('CONCAT(first_name, last_name) ilike ? ', '%' . $search . '%')->get();
@@ -63,9 +60,6 @@ class UserController extends Controller
     }
 
     public function register(Request $request) {
-        if(!!$error = $this->authorityCheck())
-            return $error;
-
         $validator = Validator::make($request->all(), [
             'first_name' => 'required|string',
             'last_name' => 'required|string',
@@ -125,9 +119,6 @@ class UserController extends Controller
     }
 
     public function destroy($id) {
-        if(!!$error = $this->authorityCheck())
-            return $error;
-
         $user = User::find($id);
 
         if(!$user) {

@@ -3,43 +3,39 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Facades\DB;
-use App\Models\User;
+use Illuminate\Support\Facades\Validator;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
-class ChangePasswordController extends Controller {
+class ChangePasswordController
+{
+    protected $user;
 
-    public function passwordResetProcess(Request $request){
-        return $this->updatePasswordRow($request)->count() > 0 ? $this->resetPassword($request) : $this->tokenNotFoundError();
+    public function __construct() {
+        $this->user = JWTAuth::parseToken()->authenticate();
     }
 
-    // Verify if token is valid
-    private function updatePasswordRow($request){
-        return DB::table('password_resets')->where('email', $request->email)->where('token', $request->token);
-    }
-
-    // Token not found response
-    private function tokenNotFoundError() {
-        return response()->json([
-            'error' => 'Either your email or token is wrong.'
-        ],Response::HTTP_UNPROCESSABLE_ENTITY);
-    }
-
-    // Reset password
-    private function resetPassword($request) {
-        // find email
-        $userData = User::whereEmail($request->email)->first();
-        // update password
-        $userData->update([
-            'password'=>bcrypt($request->password)
+    public function changePassword(Request $request) {
+        $data = $request->only('password', 'confirm_password');
+        $validator = Validator::make($data, [
+            'password' => 'string|min:6',
+            'confirm_password' => 'string',
         ]);
-        // remove verification data from db
-        $this->updatePasswordRow($request)->delete();
 
-        // reset password response
-        return response()->json([
-            'data'=>'Password has been updated.'
-        ],Response::HTTP_CREATED);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->messages()], 400);
+        }
+
+        if($request->password == $request->confirm_password) {
+            $this->user->update(['password'=>bcrypt($request->password)]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Password changed successfully'
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Passwords do not match'
+            ], 400);
+        }
     }
-
 }

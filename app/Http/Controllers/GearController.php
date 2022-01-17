@@ -29,16 +29,10 @@ class GearController extends Controller
     }
 
     public function index(Request $request) {
-        if(!!$error = $this->authorityCheck())
-            return $error;
-
-        return $this->groupByCode(gear::where('name', 'ilike', "%$request->search%")->get());
+        return $this->groupByCode(gear::where('name', 'like', "%$request->search%")->get());
     }
 
     public function selectedIndex(Request $request, $id) {
-        if(!!$error = $this->authorityCheck())
-            return $error;
-
         $selectedUser = User::find($id);
         if(!$selectedUser) {
             return response()->json([
@@ -94,9 +88,6 @@ class GearController extends Controller
     }
 
     public function show($id) {
-        if(!!$error = $this->authorityCheck())
-            return $error;
-
         $gear = Gear::find($id);
         if (!!$error = $this->gearCheck($gear)) {
             return $error;
@@ -158,9 +149,6 @@ class GearController extends Controller
     }
 
     public function destroy($id) {
-        if(!!$error = $this->authorityCheck())
-            return $error;
-
         $gear = gear::find($id);
         if (!!$error = $this->gearCheck($gear)) {
             return $error;
@@ -200,8 +188,12 @@ class GearController extends Controller
         $request = $this->user->request()->where('gear_id', $id)->
                    where('status', 1)->orWhere('status', 2)->get()->first();
         if ($gear->user_id != $this->user->id and !$request) {
-            if(!!$error = $this->authorityCheck())
-                return $error;
+            if ($this->user->role == 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Not authorized'
+                ], 401);
+            }
         }
 
         $user = $gear->user()->get()->first();
@@ -239,49 +231,5 @@ class GearController extends Controller
         }
 
         return $final;
-    }
-
-    public function addLentGear($userGear) {
-        if($userGear->isEmpty()) {
-            return $userGear;
-        }
-
-        foreach ($userGear as $gear) {
-            $gear['own'] = 1;
-            if($gear['lent'] == 0) {
-                $gear['current_holder'] = 1;
-            } else {
-                $gear['current_holder'] = 0;
-            }
-        }
-
-        $requests = $userGear->first()->user()->first()->request()->get();
-        $validRequests = [];
-        foreach($requests as $request) {
-            if ($request->status == 1) {
-                if($request == \App\Models\Request::where('gear_id', $request->gear_id)->latest()->get()->first()) {
-                    $request['current_holder'] = 1;
-                } else {
-                    $request['current_holder'] = 0;
-                }
-                $validRequests[] = $request;
-            } elseif($request->status == 2 and $request->gear()->get()->first()->user_id != $this->user->id) {
-                $request['current_holder'] = 1;
-                $validRequests[] = $request;
-            }
-        }
-
-        foreach ($validRequests as $request) {
-            $gear = $request->gear()->first();
-            $gear['own'] = 0;
-            if($request['current_holder'] == 1) {
-                $gear['current_holder'] = 1;
-            } else {
-                $gear['current_holder'] = 0;
-            }
-            $userGear = $userGear->push($gear);
-        }
-
-        return $userGear;
     }
 }
