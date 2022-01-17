@@ -641,7 +641,7 @@ Function: Deletes the request with the specified id (if the request belongs to t
 ### Password reset
 #### POST
 
-<strong>URI: `POST` http://localhost:8000/api/reset-password </strong>
+<strong>URI: `POST` http://localhost:8000/api/reset-password-email </strong>
 
 Function: Sends a password reset link to the specified email
 
@@ -655,6 +655,23 @@ Function: Sends a password reset link to the specified email
 * Error response:
     * Code: 404 Not found
     * Content: "Email does not exist."
+
+<strong>URI: `POST` http://localhost:8000/api/change-password </strong>
+
+Function: Changes user's password to a new one
+
+|Parameter |Type  |Description                                              |Required|
+|----------|------|---------------------------------------------------------|--------|
+|`email`   |string|The email of the user, who wants his password reset      |true    |
+|`token`   |string|Token, which is given with the link to reset/set password|true    |
+|`password`|string|The new password                                         |true    |
+
+* Success response:
+    * Code: 201 Created
+    * Content: "Password has been updated."
+* Error response:
+    * Code: 422 Unprocessable Content
+    * Content: "Either your email or token is wrong."
 
 <strong>URI: `POST` http://localhost:8000/api/change-password </strong>
 
