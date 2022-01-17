@@ -28,15 +28,15 @@ class UserController extends Controller
                           whereRaw('CONCAT(first_name, last_name) ilike ? ', '%' . $search . '%')->get();
         }
 
-        return $this->gearCount($users)->sortBy('first_name')->values();
+        return $this->gearCount($users)->sortBy('first_name', SORT_NATURAL|SORT_FLAG_CASE)->values();
     }
 
     public function userIndex(Request $request) {
         $company = $this->user->company()->get()->first()->id;
         $search = str_replace(' ', '', $request->search);
         $users = User::where('company_id', $company)->
-                       whereRaw('CONCAT(first_name, last_name) ilike ? ', '%' . $search . '%')->get();
-        return $this->gearCount($users)->sortBy('first_name')->values();
+                       whereRaw('CONCAT(first_name, last_name) like ? ', '%' . $search . '%')->get();
+        return $this->gearCount($users)->sortBy('first_name', SORT_NATURAL|SORT_FLAG_CASE)->values();
     }
 
     public function show($id) {

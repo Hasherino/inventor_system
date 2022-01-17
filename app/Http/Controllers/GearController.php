@@ -250,9 +250,9 @@ class GearController extends Controller
         foreach ($userGear as $group) {
             $gear = $group->first();
             $final[] = collect(['name' => $gear->name, 'code' => $gear->code, 'count' => $group->count(),
-                                'gear' => collect($group)->sortBy('serial_number')->values()]);
+                                'gear' => collect($group)->sortBy('serial_number', SORT_NATURAL|SORT_FLAG_CASE)->values()]);
         }
 
-        return collect($final)->sortBy('name')->values();
+        return collect($final)->sortBy('name', SORT_NATURAL|SORT_FLAG_CASE)->values();
     }
 }
