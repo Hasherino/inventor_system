@@ -20,16 +20,20 @@ class GearController extends Controller
     }
 
     public function userIndex(Request $request) {
-        $userGear = $this->user->gear()->where('name', 'ilike', "%$request->search%")->get();
+        $userGear = $this->user->gear()->get();
 
         $userGear = $this->addLentGear($userGear, $this->user);
-        $userGear = $this->groupByCode($userGear);
 
-        return $userGear;
+        $search = $request->search;
+        $userGear = $userGear->filter(function ($item) use ($search) {
+            return false !== stristr($item->name, $search);
+        });
+
+        return $this->groupByCode($userGear);
     }
 
     public function index(Request $request) {
-        return $this->groupByCode(gear::where('name', 'like', "%$request->search%")->get());
+        return $this->groupByCode(gear::where('name', 'ilike', "%$request->search%")->get());
     }
 
     public function selectedIndex(Request $request, $id) {
@@ -41,12 +45,16 @@ class GearController extends Controller
             ], 404);
         }
 
-        $userGear = $selectedUser->gear()->where('name', 'ilike', "%$request->search%")->get();
+        $userGear = $selectedUser->gear()->get();
 
-        $userGear = $this->addLentGear($userGear, $selectedUser);
-        $userGear = $this->groupByCode($userGear);
+        $userGear = $this->addLentGear($userGear, $this->user);
 
-        return $userGear;
+        $search = $request->search;
+        $userGear = $userGear->filter(function ($item) use ($search) {
+            return false !== stristr($item->name, $search);
+        });
+
+        return $this->groupByCode($userGear);
     }
 
     public function store(Request $request) {

@@ -33,8 +33,8 @@ class Controller extends BaseController
         $requests = $user->request()->get();
         $validRequests = [];
         foreach($requests as $request) {
-            if ($request->status == 1) {
-                if($request == \App\Models\Request::where('gear_id', $request->gear_id)->latest()->get()->first()) {
+            if($request->status == 1) {
+                if($request == \App\Models\Request::where('gear_id', $request->gear_id)->where('status', 1)->latest()->get()->first()) {
                     $request['current_holder'] = 1;
                 } else {
                     $request['current_holder'] = 0;
@@ -46,7 +46,7 @@ class Controller extends BaseController
             }
         }
 
-        foreach ($validRequests as $request) {
+        foreach($validRequests as $request) {
             $gear = $request->gear()->first();
             $gear['own'] = 0;
             if($request['current_holder'] == 1) {

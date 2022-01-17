@@ -489,6 +489,9 @@ Parameters:
 * Error response (gear already has a request):
     * Code: 400 Bad request
     * Content: "Gear already has a request"
+* Error response (trying to lend back):
+    * Code: 400 Bad request
+    * Content: "User lent you this gear"
 * Error response (bad parameters):
     * Code: 400 Bad request
     * Content: Error specification

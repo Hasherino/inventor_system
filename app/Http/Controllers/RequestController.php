@@ -65,9 +65,11 @@ class RequestController extends Controller
             } elseif ($request->user_id == $gear->user_id) {
                 $errors[] = 'This user owns this gear. (id: ' . $gearId . ')';
             } else {
-                $gearRequest = \App\Models\Request::where('gear_id', $gear->id)->get();
-                if (!$gearRequest->isEmpty() and $gearRequest->first()->status != 1) {
+                $gearRequest = \App\Models\Request::where('gear_id', $gearId)->latest()->get()->first();
+                if (!!$gearRequest and $gearRequest->status != 1) {
                     $errors[] = 'Gear already has a request. (id: ' . $gearId . ')';
+                } elseif (!\App\Models\Request::where('user_id', $request->user_id)->where('gear_id', $gearId)->get()->isEmpty()) {
+                    $errors[] = 'User lent you this gear. (id: ' . $gearId . ')';
                 } else {
                     \App\Models\Request::create([
                         'user_id' => $request->user_id,
