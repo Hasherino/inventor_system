@@ -28,7 +28,7 @@ class UserController extends Controller
                           whereRaw('CONCAT(first_name, last_name) ilike ? ', '%' . $search . '%')->get();
         }
 
-        return $this->gearCount($users);
+        return $this->gearCount($users)->sortBy('first_name')->values();
     }
 
     public function userIndex(Request $request) {
@@ -36,7 +36,7 @@ class UserController extends Controller
         $search = str_replace(' ', '', $request->search);
         $users = User::where('company_id', $company)->
                        whereRaw('CONCAT(first_name, last_name) ilike ? ', '%' . $search . '%')->get();
-        return $this->gearCount($users);
+        return $this->gearCount($users)->sortBy('first_name')->values();
     }
 
     public function show($id) {

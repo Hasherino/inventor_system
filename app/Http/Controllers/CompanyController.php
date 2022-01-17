@@ -17,12 +17,12 @@ class CompanyController extends Controller
     }
 
     public function index(Request $request) {
-        $companies = Company::where('name', 'ilike', "%$request->search%")->get();
+        $companies = Company::where('name', 'like', "%$request->search%")->get();
         foreach ($companies as $company) {
             $company['user_count'] = $company->users()->count();
         }
 
-        return $companies;
+        return $companies->sortBy('name')->values();
     }
 
     public function store(Request $request) {

@@ -42,7 +42,7 @@ Route::group(['prefix' => 'gear'], function () {
     Route::get('{id}', [GearController::class, 'userShow']);
     Route::post('', [GearController::class, 'store']);
     Route::put('{id}',  [GearController::class, 'update']);
-    Route::delete('{id}', [GearController::class, 'destroy']);
+    Route::delete('delete', [GearController::class, 'destroy']);
 });
 // Company controller routes
 Route::group(['prefix' => 'companies', 'middleware' => 'admin'], function () {

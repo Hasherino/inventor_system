@@ -156,36 +156,46 @@ class GearController extends Controller
         ]);
     }
 
-    public function destroy($id) {
-        if ($this->user->role == 1) {
-            $gear = gear::find($id);
-        } else {
-            $gear = $this->user->gear->find($id);
+    public function destroy(Request $request) {
+        $data = $request->only('gear_id');
+        $validator = Validator::make($data, [
+            'gear_id' => 'array|required',
+            'gear_id.*' => 'integer'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->messages()], 400);
         }
 
-        if (!!$error = $this->gearCheck($gear)) {
-            return $error;
+        $errors = [];
+        foreach ($request->gear_id as $id) {
+            if ($this->user->role == 1) {
+                $gear = gear::find($id);
+            } else {
+                $gear = $this->user->gear->find($id);
+            }
+
+            if (!!$this->gearCheck($gear)) {
+                $errors[] = 'Sorry, gear not found. (id: ' . $id .')';
+            } elseif ($gear['lent'] == 1) {
+                $errors[] = 'You cannot delete lent gear. (id: ' . $id .')';
+            } elseif (!\App\Models\Request::where('gear_id', $gear->id)->get()->isEmpty()) {
+                $errors[] = 'Gear has a request. (id: ' . $id .')';
+            } else {
+                foreach ($gear->history()->get() as $history) {
+                    $history->delete();
+                }
+
+                $gear->delete();
+            }
         }
 
-        if ($gear['lent'] == 1) {
+        if (!!$errors) {
             return response()->json([
                 'success' => false,
-                'message' => 'You cannot delete lent gear'
+                'message' => $errors
             ], 400);
         }
-
-        if (!\App\Models\Request::where('gear_id', $gear->id)->get()->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gear has a request'
-            ], 400);
-        }
-
-        foreach($gear->history()->get() as $history) {
-            $history->delete();
-        }
-
-        $gear->delete();
 
         return response()->json([
             'success' => true,
@@ -240,9 +250,9 @@ class GearController extends Controller
         foreach ($userGear as $group) {
             $gear = $group->first();
             $final[] = collect(['name' => $gear->name, 'code' => $gear->code, 'count' => $group->count(),
-                                'gear' => collect($group)]);
+                                'gear' => collect($group)->sortBy('serial_number')->values()]);
         }
 
-        return $final;
+        return collect($final)->sortBy('name')->values();
     }
 }

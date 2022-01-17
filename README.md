@@ -425,9 +425,13 @@ Parameters:
 
 #### DELETE
 
-<strong>URI: `GET` http://localhost:8000/api/gear/{id} </strong>
+<strong>URI: `GET` http://localhost:8000/api/gear/delete </strong>
 
-Function: Deletes the gear with the specified id. Only for users with role: 1.
+Function: Deletes the gear with the specified id's. Only for users with role: 1.
+
+|Parameter|Type     |Description|Required|
+|---------|---------|-----------|--------|
+|`gear_id`|int array|Gear's name|true    |
 
 * Success response:
     * Code: 200 OK
