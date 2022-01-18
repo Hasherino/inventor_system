@@ -16,11 +16,11 @@ class DatabaseSeeder extends Seeder
     {
         \App\Models\Company::factory(5)->create();
         $users = [
-            ['first_name' => 'admin', 'last_name' => '1', 'email' => 'admin@gmail.com',
+            ['first_name' => 'Admin', 'last_name' => 'Smith', 'email' => 'admin@gmail.com',
              'password' => bcrypt('password'), 'role' => 1, 'company_id' => 1],
-            ['first_name' => 'admin', 'last_name' => '2', 'email' => 'admin@g.com',
+            ['first_name' => 'Admin', 'last_name' => 'Ralph', 'email' => 'admin@g.com',
                 'password' => bcrypt('password'), 'role' => 1, 'company_id' => 1],
-            ['first_name' => 'admin', 'last_name' => '3', 'email' => 'admin@gm.com',
+            ['first_name' => 'admin', 'last_name' => 'Cox', 'email' => 'admin@gm.com',
                 'password' => bcrypt('password'), 'role' => 1, 'company_id' => 1]
         ];
         foreach($users as $user){
