@@ -17,24 +17,15 @@ class CompanyController extends Controller
     }
 
     public function index(Request $request) {
-        $companies = Company::where('name', 'like', "%$request->search%")->get();
-        foreach ($companies as $company) {
-            $company['user_count'] = $company->users()->count();
-        }
-
-        return $companies->sortBy('name')->values();
+        return Company::allCompanies($request->search)->sortBy('name', SORT_NATURAL|SORT_FLAG_CASE)->values();
     }
 
     public function store(Request $request) {
-        $data = $request->only('name');
-        $validator = Validator::make($data, $this->rules());
+        $company = Company::createCompany($request);
 
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->messages()], 400);
+        if ($company instanceof Response) {
+            return $company;
         }
-
-        $company = Company::create($request->all());
-        $company->save();
 
         return response()->json([
             'success' => true,
@@ -44,24 +35,11 @@ class CompanyController extends Controller
     }
 
     public function update(Request $request, $id) {
-        $data = $request->only('name');
-        $validator = Validator::make($data, $this->rules());
+        $company = Company::updateCompany($request, $id);
 
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->messages()], 400);
+        if ($company instanceof Response) {
+            return $company;
         }
-
-        $company = Company::find($id);
-
-        if (!$company) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Sorry, company not found.'
-            ], 404);
-        }
-
-        $company->fill($request->all());
-        $company->save();
 
         return response()->json([
             'success' => true,
@@ -71,33 +49,15 @@ class CompanyController extends Controller
     }
 
     public function destroy($id) {
-        $company = Company::find($id);
+        $company = Company::deleteCompany($id);
 
-        if (!$company) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Sorry, company not found.'
-            ], 404);
+        if ($company instanceof Response) {
+            return $company;
         }
-
-        if(!$company->users()->get()->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Company still has users.'
-            ], 400);
-        }
-
-        $company->delete();
 
         return response()->json([
             'success' => true,
             'message' => 'Company deleted successfully'
         ]);
-    }
-
-    public function rules() {
-        return [
-            'name' => 'required|string|unique:companies'
-        ];
     }
 }

@@ -20,96 +20,42 @@ class UserController extends Controller
     }
 
     public function index(Request $request) {
-        $search = str_replace(' ', '', $request->search);
-        if(!$request->company) {
-            $users = User::whereRaw('CONCAT(first_name, last_name) ilike ? ', '%' . $search . '%')->get();
-        } else {
-            $users = User::where('company_id', $request->company)->
-                          whereRaw('CONCAT(first_name, last_name) ilike ? ', '%' . $search . '%')->get();
-        }
+        $users = User::getAllUsers($request);
 
-        return $this->gearCount($users)->sortBy('first_name', SORT_NATURAL|SORT_FLAG_CASE)->values();
-    }
-
-    public function userIndex(Request $request) {
-        $company = $this->user->company()->get()->first()->id;
-        $search = str_replace(' ', '', $request->search);
-        $users = User::where('company_id', $company)->
-                       whereRaw('CONCAT(first_name, last_name) like ? ', '%' . $search . '%')->get();
-        return $this->gearCount($users)->sortBy('first_name', SORT_NATURAL|SORT_FLAG_CASE)->values();
-    }
-
-    public function show($id) {
-        $user = User::find($id);
-
-        if(!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Sorry, user not found.'
-            ], 404);
-        }
-        $user['gear_count'] = $user->gear()->count();
-        return $user;
-    }
-
-    public function gearCount($users) {
-        foreach($users as $user) {
-            $user['gear_count'] = $user->gear()->count();
-        }
         return $users;
     }
 
-    public function register(Request $request) {
-        $validator = Validator::make($request->all(), [
-            'first_name' => 'required|string',
-            'last_name' => 'required|string',
-            'email' => 'required|string|email|unique:users',
-            'company_id' => 'required|integer',
-            'role' => 'required|integer'
-        ]);
+    public function userIndex(Request $request) {
+        $request->company = $this->user->company()->get()->first()->id;
+        $users = User::getAllUsers($request);
 
-        if($validator->fails()) {
-            return response()->json(['error' => $validator->messages()], 400);
+        return $users;
+    }
+
+    public function show($id) {
+        $user = User::getSpecificUser($id);
+
+        return $user;
+    }
+
+    public function register(Request $request) {
+        if (!!$error = User::createUser($request)) {
+            return $error;
         }
 
-        User::create(array_merge(
-            $validator->validated(),
-            ['password' => bcrypt(Str::random(20))]
-        ));
-
         app('App\Http\Controllers\PasswordResetRequestController')->sendMail($request->email);
+
         return response()->json([
             'message' => 'Password creation email has been sent.'
         ], 201);
     }
 
     public function update(Request $request, $id) {
-        $data = $request->only('first_name', 'last_name', 'email', 'role');
-        $validator = Validator::make($data, [
-            'first_name' => 'string',
-            'last_name' => 'string',
-            'email' => 'string|email|unique:users',
-            'role' => 'integer'
-        ]);
+        $user = User::updateUser($request, $id, $this->user->role);
 
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->messages()], 400);
+        if ($user instanceof Response) {
+            return $user;
         }
-
-        if(!!$request->role and !!$error = $this->authorityCheck())
-            return $error;
-
-        $user = User::find($id);
-
-        if(!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Sorry, user not found.'
-            ], 404);
-        }
-
-        $user->fill($request->all());
-        $user->save();
 
         return response()->json([
             'success' => true,
@@ -119,23 +65,9 @@ class UserController extends Controller
     }
 
     public function destroy($id) {
-        $user = User::find($id);
-
-        if(!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Sorry, user not found.'
-            ], 404);
+        if (!!$error = User::deleteUser($id)) {
+            return $error;
         }
-
-        if($this->addLentGear($user->gear()->get(), $user)->count() != 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'User cannot be deleted, because user has gear'
-            ], 400);
-        }
-
-        $user->delete();
 
         return response()->json([
             'success' => true,

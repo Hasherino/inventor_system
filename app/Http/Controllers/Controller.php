@@ -20,7 +20,7 @@ class Controller extends BaseController
         }
     }
 
-    public function addLentGear($userGear, $user) {
+    public static function addLentGear($userGear, $user) {
         foreach ($userGear as $gear) {
             $gear['own'] = 1;
             if($gear['lent'] == 0) {

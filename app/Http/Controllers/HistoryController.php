@@ -19,17 +19,7 @@ class HistoryController extends Controller
     }
 
     public function index() {
-        $history = $this->user->history()->get()->push();
-        $senderHistory = History::where('sender_id', $this->user->id)->get();
-        foreach($senderHistory as $row) {
-            $history = $history->push($row);
-        }
-
-        foreach($history as $row) {
-            $row['gear'] = $row->gear()->get();
-        }
-
-        return $history->sortByDesc('created_at')->values();
+        return History::getUsersHistory($this->user)->sortByDesc('created_at')->values();
     }
 
     public function gearIndex($id) {
