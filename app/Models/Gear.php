@@ -66,8 +66,17 @@ class Gear extends Model
         return $gear;
     }
 
-    public static function getSpecificGear($gear, $id) {
+    public static function getSpecificGearByID($gear, $id) {
         $gear = $gear->find($id);
+        if (!!$error = self::gearCheck($gear)) {
+            return $error;
+        }
+
+        return $gear;
+    }
+
+    public static function getSpecificGearByCode($gear, $code) {
+        $gear = Gear::where('code', $code)->get()->first();
         if (!!$error = self::gearCheck($gear)) {
             return $error;
         }

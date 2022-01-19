@@ -53,11 +53,12 @@ class GearController extends Controller
     }
 
     public function show($id) {
-        return Gear::getSpecificGear(Gear::all(), $id);
+        return Gear::getSpecificGearByID(Gear::all(), $id);
     }
 
     public function showByCode($code) {
-        return Gear::getSpecificGear(Gear::all(), Gear::where('code', $code)->get()->first()->id);
+
+        return Gear::getSpecificGear(Gear::all(), $code);
     }
 
     public function userShow($id) {
