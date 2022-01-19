@@ -48,7 +48,7 @@ class Request extends Model
         }
 
         $userGear = $thisUser->gear()->get()->where('lent', 0);
-        $userGear = self::addLentGear($userGear, $thisUser);
+        $userGear = Gear::addLentGear($userGear, $thisUser);
 
         $errors = [];
         foreach ($request->gear_id as $gearId) {

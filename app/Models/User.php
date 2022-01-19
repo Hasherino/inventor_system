@@ -129,7 +129,7 @@ class User extends Authenticatable implements JWTSubject
             ], 404);
         }
 
-        if(self::addLentGear($user->gear()->get(), $user)->count() != 0) {
+        if(Gear::addLentGear($user->gear()->get(), $user)->count() != 0) {
             return response()->json([
                 'success' => false,
                 'message' => 'User cannot be deleted, because user has gear'
