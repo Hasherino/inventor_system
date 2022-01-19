@@ -58,11 +58,11 @@ class GearController extends Controller
 
     public function showByCode($code) {
 
-        return Gear::getSpecificGear(Gear::all(), $code);
+        return Gear::getSpecificGearByCode(Gear::all(), $code);
     }
 
     public function userShow($id) {
-        return Gear::getSpecificGear(Gear::addLentGear($this->user->gear()->get(), $this->user), $id);
+        return Gear::getSpecificGearByID(Gear::addLentGear($this->user->gear()->get(), $this->user), $id);
     }
 
     public function update(Request $request, $id) {
