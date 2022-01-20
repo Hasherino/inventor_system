@@ -49,7 +49,7 @@ class CompanyController extends Controller
     }
 
     public function destroy($id) {
-        if ($error = Company::deleteCompany($id) instanceof Response) {
+        if (!!($error = Company::deleteCompany($id)) instanceof Response) {
             return $error;
         }
 

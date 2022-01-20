@@ -90,7 +90,7 @@ class RequestController extends Controller
     }
 
     public function declineReturnLend($id) {
-        if (!!$error = UserRequest::declineReturn(UserRequest::find($id), $this->user->id) instanceof Response) {
+        if (!!($error = UserRequest::declineReturn(UserRequest::find($id), $this->user->id)) instanceof Response) {
             return $error;
         }
 
@@ -101,7 +101,7 @@ class RequestController extends Controller
     }
 
     public function giveaway(Request $request) {
-        if (!!$error = UserRequest::giveawayGear($request, $this->user) instanceof Response) {
+        if (!!($error = UserRequest::giveawayGear($request, $this->user)) instanceof Response) {
             return $error;
         }
 
@@ -114,7 +114,7 @@ class RequestController extends Controller
     public function acceptGiveaway($id) {
         $request = $this->user->request()->find($id);
 
-        if (!!$error = UserRequest::acceptGiveaway($request, $this->user->id) instanceof Response) {
+        if (!!($error = UserRequest::acceptGiveaway($request, $this->user->id)) instanceof Response) {
             return $error;
         }
 
@@ -135,7 +135,7 @@ class RequestController extends Controller
     }
 
     public function giveawayToYourself(Request $request) {
-        if (!!$error = UserRequest::giveGearToYourself($request, $this->user->id) instanceof Response) {
+        if (!!($error = UserRequest::giveGearToYourself($request, $this->user->id)) instanceof Response) {
             return $error;
         }
 
@@ -146,7 +146,7 @@ class RequestController extends Controller
     }
 
     public function destroy($id) {
-        if (!!$error = UserRequest::deleteRequest($id, $this->user) instanceof Response) {
+        if (!!($error = UserRequest::deleteRequest($id, $this->user)) instanceof Response) {
             return $error;
         }
 

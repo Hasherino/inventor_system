@@ -69,8 +69,6 @@ class Company extends Model
         }
 
         $company->delete();
-
-        return 0;
     }
 
     private static function validateFields($request) {
