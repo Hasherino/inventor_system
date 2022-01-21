@@ -49,18 +49,31 @@ class Gear extends Model
             return response()->json(['error' => $validator->messages()], 400);
         }
 
-        for ($i = 0; $i < $request->amount; $i++) {
-            $sameGear = Gear::where('code', $request->code)->get()->first();
+        if(!!($sameGear = Gear::where('code', $request->code)->get()->first()) and
+        ($sameGear->name != $request->name or
+        $sameGear->description != $request->description or
+        $sameGear->unit_price != $request->unit_price)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gear does not match with other ones with the same code',
+            ], 400);
+        }
 
-            if(!!$sameGear and ($sameGear->name != $request->name or
-                    $sameGear->description != $request->description or
-                    $sameGear->unit_price != $request->unit_price)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Gear does not match with other ones with the same code',
-                ], 400);
+        $serial_number = explode(",", $request->serial_number);
+        if(count($serial_number) == 1 or count($serial_number) == 0) {
+            for ($i = 0; $i < $request->amount; $i++) {
+                $gear = Gear::create($request->all())->save();
             }
-            $gear = Gear::create($request->all())->save();
+        } elseif(count($serial_number) != $request->amount) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Serial number amount does not match gear amount',
+            ], 400);
+        } else {
+            for ($i = 0; $i < $request->amount; $i++) {
+                $request->merge(['serial_number' => $serial_number[$i]]);
+                $gear = Gear::create($request->all())->save();
+            }
         }
 
         return $gear;

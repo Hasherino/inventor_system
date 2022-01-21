@@ -382,7 +382,7 @@ Parameters:
 |`name`         |string|Gear's name                        |true    |
 |`code`         |string|Gear's code                        |true    |
 |`description`  |string|Gear's description. Max length: 255|true    |
-|`serial_number`|string|Gear's serial number. Unique       |true    |
+|`serial_number`|string|Gear's serial number. Unique. Can be listed as csv for adding multiple gear|true    |
 |`unit_price`   |double|Unit price of the gear             |true    |
 |`long_term`    |bool  |Is the gear long-term              |true    |
 |`user_id`      |int   |Gear's owner's id                  |true    |
