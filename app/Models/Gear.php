@@ -70,10 +70,28 @@ class Gear extends Model
                 'message' => 'Serial number amount does not match gear amount',
             ], 400);
         } else {
+            $errors = [];
+            $except = [];
             for ($i = 0; $i < $request->amount; $i++) {
-                $request->merge(['serial_number' => $serial_number[$i]]);
-                $gear = Gear::create($request->all())->save();
+                if(!Gear::where('serial_number', $serial_number[$i])->get()->isEmpty()) {
+                    $errors[] = 'Gear with this serial number already exists (SN: '.$serial_number[$i].')';
+                    $except[] = $i;
+                }
             }
+
+            for ($i = 0; $i < $request->amount; $i++) {
+                if (!in_array($i, $except)) {
+                    $request->merge(['serial_number' => $serial_number[$i]]);
+                    $gear = Gear::create($request->all())->save();
+                }
+            }
+        }
+
+        if (!!$errors) {
+            return response()->json([
+                'success' => false,
+                'message' => $errors
+            ], 400);
         }
 
         return $gear;
