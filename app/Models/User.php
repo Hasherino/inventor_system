@@ -47,7 +47,9 @@ class User extends Authenticatable implements JWTSubject
             $user['gear_count'] = $user->gear()->count();
         }
 
-        return $users->sortBy('first_name', SORT_NATURAL|SORT_FLAG_CASE)->values();
+        return $users->sortBy(function($user){
+            return iconv('UTF-8', 'ASCII//TRANSLIT', $user->first_name.$user->last_name);
+        }, SORT_NATURAL|SORT_FLAG_CASE)->values();
     }
 
     public static function getSpecificUser($id) {
