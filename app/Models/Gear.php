@@ -84,19 +84,19 @@ class Gear extends Model
                 }
             }
 
-            for ($i = 0; $i < $request->amount; $i++) {
-                if (!in_array($i, $except)) {
-                    $request->merge(['serial_number' => $serial_number[$i]]);
-                    $gear = Gear::create($request->all())->save();
+            if (!!$errors) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $errors
+                ], 400);
+            } else {
+                for ($i = 0; $i < $request->amount; $i++) {
+                    if (!in_array($i, $except)) {
+                        $request->merge(['serial_number' => $serial_number[$i]]);
+                        $gear = Gear::create($request->all())->save();
+                    }
                 }
             }
-        }
-
-        if (!!$errors) {
-            return response()->json([
-                'success' => false,
-                'message' => $errors
-            ], 400);
         }
 
         return $gear;
