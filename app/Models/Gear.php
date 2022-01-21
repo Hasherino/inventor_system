@@ -202,7 +202,9 @@ class Gear extends Model
                 'gear' => collect($group)->sortBy('serial_number', SORT_NATURAL|SORT_FLAG_CASE)->values()]);
         }
 
-        return collect($final)->sortBy('name', SORT_NATURAL|SORT_FLAG_CASE)->values();
+        return collect($final)->sortBy(function($group){
+            return iconv('UTF-8', 'ASCII//TRANSLIT', $group->first());
+        })->values();
     }
 
     public function user() {
