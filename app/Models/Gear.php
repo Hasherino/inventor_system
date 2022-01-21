@@ -204,7 +204,7 @@ class Gear extends Model
 
         return collect($final)->sortBy(function($group){
             return iconv('UTF-8', 'ASCII//TRANSLIT', $group->first());
-        })->values();
+        }, SORT_NATURAL|SORT_FLAG_CASE)->values();
     }
 
     public function user() {
