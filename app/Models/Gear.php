@@ -60,7 +60,7 @@ class Gear extends Model
         }
 
         $serial_number = explode(",", $request->serial_number);
-        if(count($serial_number) == 1 or count($serial_number) == 0) {
+        if(count($serial_number) == 0) {
             for ($i = 0; $i < $request->amount; $i++) {
                 $gear = Gear::create($request->all())->save();
             }
