@@ -69,6 +69,11 @@ class Gear extends Model
                 'success' => false,
                 'message' => 'Serial number amount does not match gear amount',
             ], 400);
+        } elseif(count($serial_number) != count(array_unique($serial_number))) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Serial numbers must be unique',
+            ], 400);
         } else {
             $errors = [];
             $except = [];
