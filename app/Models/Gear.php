@@ -146,7 +146,7 @@ class Gear extends Model
         return $gear;
     }
 
-    public static function deleteGear($request, $user) {
+    public static function deleteGear($request) {
         $data = $request->only('gear_id');
         $validator = Validator::make($data, [
             'gear_id' => 'array|required',
@@ -156,6 +156,8 @@ class Gear extends Model
         if ($validator->fails()) {
             return response()->json(['error' => $validator->messages()], 400);
         }
+
+        $user = $request->user;
 
         $errors = [];
         foreach ($request->gear_id as $id) {

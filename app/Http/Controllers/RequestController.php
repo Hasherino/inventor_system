@@ -13,18 +13,12 @@ use Illuminate\Support\Facades\Validator;
 
 class RequestController extends Controller
 {
-    protected $user;
-
-    public function __construct() {
-        $this->user = JWTAuth::parseToken()->authenticate();
-    }
-
-    public function pendingRequests() {
-        return UserRequest::getUsersPendingRequests($this->user->id)->sortByDesc('created_at')->values();
+    public function pendingRequests(Request $request) {
+        return UserRequest::getUsersPendingRequests($request->user->id)->sortByDesc('created_at')->values();
     }
 
     public function lend(Request $request) {
-        if (!!$error = UserRequest::lendGear($request, $this->user)) {
+        if (!!$error = UserRequest::lendGear($request)) {
             return $error;
         }
 
@@ -34,8 +28,10 @@ class RequestController extends Controller
         ]);
     }
 
-    public function acceptLend($id) {
-        $request = $this->user->request()->find($id);
+    public function acceptLend(Request $request, $id) {
+        $user = $request->user;
+
+        $request = $user->request()->find($id);
         $gear = UserRequest::acceptLendGetGear($request);
 
         if ($gear instanceof Response) {
@@ -43,7 +39,7 @@ class RequestController extends Controller
         }
 
         History::create([
-            'user_id' => $this->user->id,
+            'user_id' => $user->id,
             'sender_id' => $request->sender_id,
             'owner_id' => $gear->get()->first()->user_id,
             'gear_id' => $gear->get()->first()->id,
@@ -57,7 +53,7 @@ class RequestController extends Controller
     }
 
     public function returnLend(Request $request) {
-        if (!!$error = UserRequest::returnGear($request, $this->user->id)) {
+        if (!!$error = UserRequest::returnGear($request)) {
             return $error;
         }
 
@@ -67,9 +63,9 @@ class RequestController extends Controller
         ]);
     }
 
-    public function acceptReturnLend($id) {
-        $request = UserRequest::find($id);
-        $gear = UserRequest::acceptReturnGetGear($request, $this->user->id);
+    public function acceptReturnLend(Request $request, $id) {
+        $userRequest = UserRequest::find($id);
+        $gear = UserRequest::acceptReturnGetGear($userRequest, $request->user->id);
 
         if ($gear instanceof Response) {
             return $gear;
@@ -77,9 +73,9 @@ class RequestController extends Controller
 
         History::create([
             'gear_id' => $gear->id,
-            'user_id' => $request->sender_id,
+            'user_id' => $userRequest->sender_id,
             'owner_id' => $gear->user_id,
-            'sender_id' => $request->user_id,
+            'sender_id' => $userRequest->user_id,
             'event' => 1
         ]);
 
@@ -89,8 +85,8 @@ class RequestController extends Controller
         ]);
     }
 
-    public function declineReturnLend($id) {
-        if (!!($error = UserRequest::declineReturn(UserRequest::find($id), $this->user->id)) instanceof Response) {
+    public function declineReturnLend(Request $request, $id) {
+        if (!!($error = UserRequest::declineReturn(UserRequest::find($id), $request->user->id)) instanceof Response) {
             return $error;
         }
 
@@ -101,7 +97,7 @@ class RequestController extends Controller
     }
 
     public function giveaway(Request $request) {
-        if (!!($error = UserRequest::giveawayGear($request, $this->user)) instanceof Response) {
+        if (!!($error = UserRequest::giveawayGear($request)) instanceof Response) {
             return $error;
         }
 
@@ -111,22 +107,24 @@ class RequestController extends Controller
         ]);
     }
 
-    public function acceptGiveaway($id) {
-        $request = $this->user->request()->find($id);
+    public function acceptGiveaway(Request $request, $id) {
+        $user = $request->user;
 
-        if (!!($error = UserRequest::acceptGiveaway($request, $this->user->id)) instanceof Response) {
+        $userRequest = $user->request()->find($id);
+
+        if (!!($error = UserRequest::acceptGiveaway($userRequest, $user->id)) instanceof Response) {
             return $error;
         }
 
         History::create([
-            'user_id' => $this->user->id,
-            'sender_id' => $request->sender_id,
-            'owner_id' => $request->sender_id,
-            'gear_id' => $request->gear()->get()->first()->id,
+            'user_id' => $user->id,
+            'sender_id' => $userRequest->sender_id,
+            'owner_id' => $userRequest->sender_id,
+            'gear_id' => $userRequest->gear()->get()->first()->id,
             'event' => 2
         ])->save();
 
-        $request->delete();
+        $userRequest->delete();
 
         return response()->json([
             'success' => true,
@@ -135,7 +133,7 @@ class RequestController extends Controller
     }
 
     public function giveawayToYourself(Request $request) {
-        if (!!($error = UserRequest::giveGearToYourself($request, $this->user->id)) instanceof Response) {
+        if (!!($error = UserRequest::giveGearToYourself($request)) instanceof Response) {
             return $error;
         }
 
@@ -145,8 +143,8 @@ class RequestController extends Controller
         ]);
     }
 
-    public function destroy($id) {
-        if (!!($error = UserRequest::deleteRequest($id, $this->user)) instanceof Response) {
+    public function destroy(Request $request, $id) {
+        if (!!($error = UserRequest::deleteRequest($id, $request->user)) instanceof Response) {
             return $error;
         }
 

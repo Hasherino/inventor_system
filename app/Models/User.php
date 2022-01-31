@@ -86,7 +86,7 @@ class User extends Authenticatable implements JWTSubject
         ));
     }
 
-    public static function updateUser($request, $id, $userRole) {
+    public static function updateUser($request, $id) {
         $data = $request->only('first_name', 'last_name', 'email', 'role');
         $validator = Validator::make($data, [
             'first_name' => 'string',
@@ -99,7 +99,7 @@ class User extends Authenticatable implements JWTSubject
             return response()->json(['error' => $validator->messages()], 400);
         }
 
-        if(!!$request->role and $userRole != 1) {
+        if(!!$request->role and $request->user->role != 1) {
             return response()->json([
                 'success' => false,
                 'message' => 'Not authorized'

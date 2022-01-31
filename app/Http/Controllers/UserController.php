@@ -13,12 +13,6 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-    protected $user;
-
-    public function __construct() {
-        $this->user = JWTAuth::parseToken()->authenticate();
-    }
-
     public function index(Request $request) {
         $users = User::getAllUsers($request);
 
@@ -26,7 +20,7 @@ class UserController extends Controller
     }
 
     public function userIndex(Request $request) {
-        $request->company = $this->user->company()->get()->first()->id;
+        $request->company = $request->user->company()->get()->first()->id;
         $users = User::getAllUsers($request);
 
         return $users;
@@ -51,7 +45,7 @@ class UserController extends Controller
     }
 
     public function update(Request $request, $id) {
-        $user = User::updateUser($request, $id, $this->user->role);
+        $user = User::updateUser($request, $id);
 
         if ($user instanceof Response) {
             return $user;

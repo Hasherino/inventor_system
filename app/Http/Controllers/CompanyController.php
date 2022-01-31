@@ -10,12 +10,6 @@ use Illuminate\Support\Facades\Validator;
 
 class CompanyController extends Controller
 {
-    protected $user;
-
-    public function __construct() {
-        $this->user = JWTAuth::parseToken()->authenticate();
-    }
-
     public function index(Request $request) {
         return Company::allCompanies($request->search)->sortBy('name', SORT_NATURAL|SORT_FLAG_CASE)->values();
     }

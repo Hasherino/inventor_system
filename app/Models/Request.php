@@ -28,7 +28,9 @@ class Request extends Model
         return $requests;
     }
 
-    public static function lendGear($request, $thisUser) {
+    public static function lendGear($request) {
+        $thisUser = $request->user;
+
         $data = $request->only('user_id', 'gear_id');
         $validator = Validator::make($data, [
             'user_id' => 'integer|required|exists:users,id',
@@ -84,7 +86,7 @@ class Request extends Model
         }
     }
 
-    public static function returnGear($request, $thisUserId) {
+    public static function returnGear($request) {
         $data = $request->only('gear_id');
         $validator = Validator::make($data, [
             'gear_id' => 'array|required',
@@ -98,7 +100,7 @@ class Request extends Model
         $errors = [];
         foreach ($request->gear_id as $gearId) {
             $requests = self::where('gear_id', $gearId)->get();
-            $userRequest = $requests->where('user_id', $thisUserId)->where('created_at', $requests->max('created_at'))->first();
+            $userRequest = $requests->where('user_id', $request->user->id)->where('created_at', $requests->max('created_at'))->first();
 
             if (!$userRequest) {
                 $errors[] = 'Sorry, request not found. (id: ' . $gearId . ')';
@@ -176,7 +178,9 @@ class Request extends Model
         $request->update(['status' => 1]);
     }
 
-    public static function giveawayGear($request, $thisUser) {
+    public static function giveawayGear($request) {
+        $thisUser = $request->user;
+
         $data = $request->only('user_id', 'gear_id');
         $validator = Validator::make($data, [
             'user_id' => 'integer|required|exists:users,id',
@@ -229,7 +233,9 @@ class Request extends Model
         $request->gear()->update(['user_id' => $thisUserId]);
     }
 
-    public static function giveGearToYourself($request, $thisUserId) {
+    public static function giveGearToYourself($request) {
+        $thisUserId = $request->user->id;
+
         $data = $request->only('gear_id');
         $validator = Validator::make($data, [
             'gear_id' => 'array|required',

@@ -12,14 +12,8 @@ use Illuminate\Support\Facades\Validator;
 
 class HistoryController extends Controller
 {
-    protected $user;
-
-    public function __construct() {
-        $this->user = JWTAuth::parseToken()->authenticate();
-    }
-
-    public function index() {
-        return History::getUsersHistory($this->user)->sortByDesc('created_at')->values();
+    public function index(Request $request) {
+        return History::getUsersHistory($request->user)->sortByDesc('created_at')->values();
     }
 
     public function gearIndex($id) {

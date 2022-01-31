@@ -12,14 +12,8 @@ use Illuminate\Support\Facades\Validator;
 
 class GearController extends Controller
 {
-    protected $user;
-
-    public function __construct() {
-        $this->user = JWTAuth::parseToken()->authenticate();
-    }
-
     public function userIndex(Request $request) {
-        return Gear::getUsersGear($this->user, $request->search);
+        return Gear::getUsersGear($request->user, $request->search);
     }
 
     public function index(Request $request) {
@@ -61,8 +55,8 @@ class GearController extends Controller
         return Gear::getSpecificGearByCode(Gear::all(), $code);
     }
 
-    public function userShow($id) {
-        return Gear::getSpecificGearByID(Gear::addLentGear($this->user->gear()->get(), $this->user), $id);
+    public function userShow(Request $request, $id) {
+        return Gear::getSpecificGearByID(Gear::addLentGear($request->user->gear()->get(), $request->user), $id);
     }
 
     public function update(Request $request, $id) {
@@ -80,7 +74,7 @@ class GearController extends Controller
     }
 
     public function destroy(Request $request) {
-        if (!!$error = Gear::deleteGear($request, $this->user)) {
+        if (!!$error = Gear::deleteGear($request)) {
             return $error;
         }
 
@@ -90,7 +84,7 @@ class GearController extends Controller
         ]);
     }
 
-    public function generatePDF($id) {
-        return Gear::generateGearPDF($id, $this->user);
+    public function generatePDF(Request $request, $id) {
+        return Gear::generateGearPDF($id, $request->user);
     }
 }

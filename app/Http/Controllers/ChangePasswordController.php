@@ -9,13 +9,9 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ChangePasswordController
 {
-    protected $user;
-
-    public function __construct() {
-        $this->user = JWTAuth::parseToken()->authenticate();
-    }
-
     public function changePassword(Request $request) {
+        $user = $request->user;
+
         $data = $request->only('password', 'confirm_password', 'old_password');
         $validator = Validator::make($data, [
             'password' => 'string|min:6',
@@ -32,13 +28,13 @@ class ChangePasswordController
                 'success' => false,
                 'message' => 'Passwords do not match'
             ], 400);
-        } else if (!Hash::check($request->old_password, $this->user->password)) {
+        } else if (!Hash::check($request->old_password, $user->password)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Password is incorrect'
             ], 400);
         } else {
-            $this->user->update(['password'=>bcrypt($request->password)]);
+            $user->update(['password'=>bcrypt($request->password)]);
             return response()->json([
                 'success' => true,
                 'message' => 'Password changed successfully'
