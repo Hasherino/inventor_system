@@ -1,6 +1,7 @@
 # Inventor system
 
 ## To launch the API on your local machine:
+* `composer update`
 * `php artisan jwt:secret`
 * `php artisan key:generate`
 * Launch a local MySQL server and create `.env` file based on `.env.example` and edit it to match your configuration
