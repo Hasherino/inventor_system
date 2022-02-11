@@ -136,10 +136,7 @@ class Gear extends Model
             return response()->json(['error' => $validator->messages()], 400);
         }
 
-        $gear = gear::find($id);
-        if (!!$error = self::gearCheck($gear)) {
-            return $error;
-        }
+        $gear = gear::findOrFail($id);
 
         $gear->fill($request->all())->save();
 
@@ -162,7 +159,7 @@ class Gear extends Model
         $errors = [];
         foreach ($request->gear_id as $id) {
             if ($user->role == 1) {
-                $gear = gear::find($id);
+                $gear = gear::findOrFail($id);
             } else {
                 $gear = $user->gear->find($id);
             }
@@ -191,10 +188,7 @@ class Gear extends Model
     }
 
     public static function generateGearPDF($id, $user) {
-        $gear = Gear::find($id);
-        if (!!$error = self::gearCheck($gear)) {
-            return $error;
-        }
+        $gear = Gear::findOrFail($id);
 
         $request = $user->request()->where('gear_id', $id)->where('status', 1)->orWhere('status', 2)->get()->first();
         if ($gear->user_id != $user->id and !$request) {
@@ -211,9 +205,9 @@ class Gear extends Model
 
         $history = $gear->history()->get()->sortByDesc('created_at');
         foreach ($history as $row) {
-            $owner = User::find($row->owner_id);
-            $sender = User::find($row->sender_id);
-            $user = User::find($row->user_id);
+            $owner = User::findOrFail($row->owner_id);
+            $sender = User::findOrFail($row->sender_id);
+            $user = User::findOrFail($row->user_id);
             $row['owner'] = $owner->first_name.' '.$owner->last_name;
             $row['sender'] = $sender->first_name.' '.$sender->last_name;
             $row['user'] = $user->first_name.' '.$user->last_name;

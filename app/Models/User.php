@@ -53,14 +53,7 @@ class User extends Authenticatable implements JWTSubject
     }
 
     public static function getSpecificUser($id) {
-        $user = User::find($id);
-
-        if(!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Sorry, user not found.'
-            ], 404);
-        }
+        $user = User::findOrFail($id);
 
         $user['gear_count'] = $user->gear()->count();
 
@@ -106,15 +99,7 @@ class User extends Authenticatable implements JWTSubject
             ], 401);
         }
 
-        $user = User::find($id);
-
-        if(!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Sorry, user not found.'
-            ], 404);
-        }
-
+        $user = User::findOrFail($id);
         $user->fill($request->all());
         $user->save();
 
@@ -122,14 +107,7 @@ class User extends Authenticatable implements JWTSubject
     }
 
     public static function deleteUser($id) {
-        $user = User::find($id);
-
-        if(!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Sorry, user not found.'
-            ], 404);
-        }
+        $user = User::findOrFail($id);
 
         if(Gear::addLentGear($user->gear()->get(), $user)->count() != 0) {
             return response()->json([

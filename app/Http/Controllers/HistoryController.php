@@ -17,6 +17,6 @@ class HistoryController extends Controller
     }
 
     public function gearIndex($id) {
-        return Gear::find($id)->history()->get()->sortByDesc('created_at')->values();
+        return Gear::findOrFail($id)->history()->get()->sortByDesc('created_at')->values();
     }
 }

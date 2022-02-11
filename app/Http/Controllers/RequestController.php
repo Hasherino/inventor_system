@@ -38,13 +38,7 @@ class RequestController extends Controller
             return $gear;
         }
 
-        History::create([
-            'user_id' => $user->id,
-            'sender_id' => $request->sender_id,
-            'owner_id' => $gear->get()->first()->user_id,
-            'gear_id' => $gear->get()->first()->id,
-            'event' => 0
-        ])->save();
+        self::createHistory($user->id, $request->sender_id, $gear->get()->first()->user_id, $gear->get()->first()->id, 0);
 
         return response()->json([
             'success' => true,
@@ -64,20 +58,14 @@ class RequestController extends Controller
     }
 
     public function acceptReturnLend(Request $request, $id) {
-        $userRequest = UserRequest::find($id);
+        $userRequest = UserRequest::findOrFail($id);
         $gear = UserRequest::acceptReturnGetGear($userRequest, $request->user->id);
 
         if ($gear instanceof Response) {
             return $gear;
         }
 
-        History::create([
-            'gear_id' => $gear->id,
-            'user_id' => $userRequest->sender_id,
-            'owner_id' => $gear->user_id,
-            'sender_id' => $userRequest->user_id,
-            'event' => 1
-        ]);
+        self::createHistory($userRequest->sender_id, $gear->user_id, $userRequest->user_id, $gear->id, 1);
 
         return response()->json([
             'success' => true,
@@ -86,7 +74,7 @@ class RequestController extends Controller
     }
 
     public function declineReturnLend(Request $request, $id) {
-        if (!!($error = UserRequest::declineReturn(UserRequest::find($id), $request->user->id)) instanceof Response) {
+        if (!!($error = UserRequest::declineReturn(UserRequest::findOrFail($id), $request->user->id)) instanceof Response) {
             return $error;
         }
 
@@ -116,13 +104,7 @@ class RequestController extends Controller
             return $error;
         }
 
-        History::create([
-            'user_id' => $user->id,
-            'sender_id' => $userRequest->sender_id,
-            'owner_id' => $userRequest->sender_id,
-            'gear_id' => $userRequest->gear()->get()->first()->id,
-            'event' => 2
-        ])->save();
+        self::createHistory($user->id, $userRequest->sender_id, $userRequest->sender_id, $userRequest->gear()->get()->first()->id, 2);
 
         $userRequest->delete();
 
@@ -152,5 +134,15 @@ class RequestController extends Controller
             'success' => true,
             'message' => 'Request deleted successfully.'
         ]);
+    }
+
+    private static function createHistory($user_id, $sender_id, $owner_id, $gear_id, $event) {
+        History::create([
+            'user_id' => $user_id,
+            'sender_id' => $sender_id,
+            'owner_id' => $owner_id,
+            'gear_id' => $gear_id,
+            'event' => $event
+        ])->save();
     }
 }

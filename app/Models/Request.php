@@ -139,7 +139,7 @@ class Request extends Model
     }
 
     public static function acceptReturnGetGear($request, $thisUserId) {
-        if (!$request or $request->status != 2) {
+        if (!$request->status != 2) {
             return response()->json([
                 'success' => false,
                 'message' => 'Sorry, request not found.'
@@ -161,7 +161,7 @@ class Request extends Model
     }
 
     public static function declineReturn($request, $thisUserId) {
-        if (!$request or $request->status != 2) {
+        if (!$request->status != 2) {
             return response()->json([
                 'success' => false,
                 'message' => 'Sorry, request not found.'

@@ -37,14 +37,7 @@ class Company extends Model
             return $validation;
         }
 
-        $company = Company::find($id);
-
-        if (!$company) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Sorry, company not found.'
-            ], 404);
-        }
+        $company = Company::findOrFail($id);
 
         $company->fill($request->all())->save();
 
@@ -52,14 +45,7 @@ class Company extends Model
     }
 
     public static function deleteCompany($id) {
-        $company = Company::find($id);
-
-        if (!$company) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Sorry, company not found.'
-            ], 404);
-        }
+        $company = Company::findOrFail($id);
 
         if(!$company->users()->get()->isEmpty()) {
             return response()->json([

@@ -21,13 +21,7 @@ class GearController extends Controller
     }
 
     public function selectedIndex(Request $request, $id) {
-        $selectedUser = User::find($id);
-        if(!$selectedUser) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Sorry, user not found.'
-            ], 404);
-        }
+        $selectedUser = User::findOrFail($id);
 
         return Gear::getUsersGear($selectedUser, $request->search);
     }
