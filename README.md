@@ -1,5 +1,7 @@
 # Inventor system
 
+A system that lets you keep track of inventory
+
 ## To launch the API on your local machine:
 * `composer update`
 * `php artisan jwt:secret`
